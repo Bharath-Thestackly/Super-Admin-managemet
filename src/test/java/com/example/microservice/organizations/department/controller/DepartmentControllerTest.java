@@ -1,4 +1,4 @@
-package com.example.microservice.organization.department.controller;
+package com.example.microservice.organizations.department.controller;
 
 import com.example.microservice.organizations.department.dto.DepartmentRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
