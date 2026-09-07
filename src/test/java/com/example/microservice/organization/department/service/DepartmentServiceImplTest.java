@@ -16,10 +16,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.example.microservice.organization.department.dto.DepartmentRequest;
-import com.example.microservice.organization.department.dto.DepartmentResponse;
-import com.example.microservice.organization.department.entity.Department;
-import com.example.microservice.organization.department.repository.DepartmentRepository;
+import com.example.microservice.organizations.department.dto.DepartmentRequest;
+import com.example.microservice.organizations.department.dto.DepartmentResponse;
+import com.example.microservice.organizations.department.entity.Department;
+import com.example.microservice.organizations.department.repository.DepartmentRepository;
+import com.example.microservice.organizations.department.service.DepartmentServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class DepartmentServiceImplTest {

@@ -1,8 +1,6 @@
-package com.example.microservice.organization.department.dto;
+package com.example.microservice.organizations.department.dto;
 
-public class DepartmentResponse {
-
-    private Long id;
+public class DepartmentRequest {
 
     private String departmentCode;
 
@@ -11,14 +9,6 @@ public class DepartmentResponse {
     private String description;
 
     private Boolean active;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getDepartmentCode() {
         return departmentCode;

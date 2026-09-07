@@ -1,6 +1,6 @@
 package com.example.microservice.organization.department.controller;
 
-import com.example.microservice.organization.department.dto.DepartmentRequest;
+import com.example.microservice.organizations.department.dto.DepartmentRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

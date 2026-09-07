@@ -1,4 +1,4 @@
-package com.example.microservice.organization.department.entity;
+package com.example.microservice.organizations.department.entity;
 
 import com.example.microservice.common.abstracts.BaseEntity;
 

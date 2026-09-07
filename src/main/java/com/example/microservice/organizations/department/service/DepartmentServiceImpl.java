@@ -1,4 +1,4 @@
-package com.example.microservice.organization.department.service;
+package com.example.microservice.organizations.department.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,10 +6,10 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.example.microservice.common.abstracts.AbstractService;
-import com.example.microservice.organization.department.dto.DepartmentRequest;
-import com.example.microservice.organization.department.dto.DepartmentResponse;
-import com.example.microservice.organization.department.entity.Department;
-import com.example.microservice.organization.department.repository.DepartmentRepository;
+import com.example.microservice.organizations.department.dto.DepartmentRequest;
+import com.example.microservice.organizations.department.dto.DepartmentResponse;
+import com.example.microservice.organizations.department.entity.Department;
+import com.example.microservice.organizations.department.repository.DepartmentRepository;
 
 @Service
 public class DepartmentServiceImpl

@@ -1,4 +1,4 @@
-package com.example.microservice.organization.department.controller;
+package com.example.microservice.organizations.department.controller;
 
 import java.util.List;
 
@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.microservice.common.abstracts.AbstractController;
-import com.example.microservice.organization.department.dto.DepartmentRequest;
-import com.example.microservice.organization.department.dto.DepartmentResponse;
-import com.example.microservice.organization.department.entity.Department;
-import com.example.microservice.organization.department.service.DepartmentServiceImpl;
+import com.example.microservice.organizations.department.dto.DepartmentRequest;
+import com.example.microservice.organizations.department.dto.DepartmentResponse;
+import com.example.microservice.organizations.department.entity.Department;
+import com.example.microservice.organizations.department.service.DepartmentServiceImpl;
 
 @RestController
 @RequestMapping("/departments")
