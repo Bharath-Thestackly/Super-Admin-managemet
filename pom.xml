@@ -84,11 +84,11 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Database: In-memory H2 for testing -->
+        <!-- Local review database must be present for plain spring-boot:run and java -jar. -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <scope>test</scope>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- SpringDoc OpenAPI (Swagger UI) -->
@@ -110,6 +110,15 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>review</id>
+            <properties>
+                <spring-boot.run.profiles>review</spring-boot.run.profiles>
+            </properties>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>

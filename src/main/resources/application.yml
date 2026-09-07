@@ -4,34 +4,10 @@ server:
     context-path: /api
 
 spring:
+  profiles:
+    default: review
   application:
     name: base-microservice
-  
-  datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/microservice_db}
-    driver-class-name: org.postgresql.Driver
-    username: ${SPRING_DATASOURCE_USERNAME:postgres}
-    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
-    hikari:
-      minimum-idle: ${DB_POOL_MIN_IDLE:5}
-      maximum-pool-size: ${DB_POOL_MAX_SIZE:20}
-      idle-timeout: ${DB_POOL_IDLE_TIMEOUT:300000}
-      max-lifetime: ${DB_POOL_MAX_LIFETIME:1200000}
-      connection-timeout: ${DB_POOL_CONN_TIMEOUT:20000}
-  
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    hibernate:
-      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
-    show-sql: false
-    open-in-view: false
-    properties:
-      hibernate:
-        format_sql: true
-        default_schema: ${SPRING_JPA_DEFAULT_SCHEMA:public}
-        jdbc:
-          lob:
-            non_contextual_creation: true
 
   security:
     oauth2:
