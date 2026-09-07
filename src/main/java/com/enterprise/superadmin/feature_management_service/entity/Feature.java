@@ -1,4 +1,4 @@
 package com.enterprise.superadmin.feature_management_service.entity;
 
-public class FEatureManagement {
+public class Feature {
 }
