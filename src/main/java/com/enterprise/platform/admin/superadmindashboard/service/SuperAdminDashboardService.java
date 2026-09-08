@@ -6,18 +6,9 @@ import com.enterprise.platform.admin.superadmindashboard.dto.response.SuperAdmin
 
 public interface SuperAdminDashboardService {
 
-    /**
-     * Aggregates full Super Admin Dashboard data across all domain clients.
-     */
     SuperAdminDashboardResponse getDashboard();
 
-    /**
-     * Returns high-level platform summary counts required by UI widgets.
-     */
     DashboardSummaryResponse getDashboardSummary();
 
-    /**
-     * Returns platform dashboard statistics required by the approved FRS.
-     */
     DashboardStatisticsResponse getDashboardStatistics();
 }

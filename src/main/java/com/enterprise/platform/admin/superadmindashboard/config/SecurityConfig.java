@@ -1,48 +1,58 @@
 package com.enterprise.platform.admin.superadmindashboard.config;
 
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
-    private final RoleHeaderAuthenticationFilter roleHeaderAuthenticationFilter;
+    @Value("${app.security.admin-username:superadmin}")
+    private String adminUsername;
 
-    public SecurityConfig(RoleHeaderAuthenticationFilter roleHeaderAuthenticationFilter) {
-        this.roleHeaderAuthenticationFilter = roleHeaderAuthenticationFilter;
-    }
+    @Value("${app.security.admin-password:{noop}Admin@1234}")
+    private String adminPassword;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Public system endpoints
                         .requestMatchers(
                                 "/actuator/health",
                                 "/actuator/info",
+                                "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**"
+                                "/swagger-ui.html"
                         ).permitAll()
-                        .requestMatchers("/api/v1/admin/dashboard/**").hasAuthority("SUPER_ADMIN")
+                        // Enforce Super Admin role authorization
+                        .requestMatchers("/api/v1/admin/dashboard/**").hasRole("SUPER_ADMIN")
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(roleHeaderAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
 
     @Bean
-    public FilterRegistrationBean<RoleHeaderAuthenticationFilter> disableAutoRegistration(
-            RoleHeaderAuthenticationFilter filter) {
-        FilterRegistrationBean<RoleHeaderAuthenticationFilter> registrationBean =
-                new FilterRegistrationBean<>(filter);
-        registrationBean.setEnabled(false);
-        return registrationBean;
+    public UserDetailsService userDetailsService() {
+        UserDetails superAdmin = User.builder()
+                .username(adminUsername)
+                .password(adminPassword)
+                .roles("SUPER_ADMIN")
+                .build();
+        return new InMemoryUserDetailsManager(superAdmin);
     }
 }
