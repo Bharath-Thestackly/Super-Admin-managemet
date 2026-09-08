@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -37,14 +38,14 @@ class BusinessUnitControllerTest {
     private BusinessUnitService service;
 
     private Long sampleId;
-    private Long  sampleOrgId;
+    private UUID  sampleOrgId;
     private BusinessUnitResponseDto sampleResponse;
     private BusinessUnitRequestDto sampleRequest;
 
     @BeforeEach
     void setUp() {
         sampleId = 1L;
-        sampleOrgId = 100L;
+        sampleOrgId = UUID.randomUUID();
 
         sampleResponse = BusinessUnitResponseDto.builder()
                 .id(sampleId)

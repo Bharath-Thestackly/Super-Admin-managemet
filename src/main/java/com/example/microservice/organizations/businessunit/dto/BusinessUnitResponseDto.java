@@ -1,13 +1,14 @@
 package com.example.microservice.organizations.businessunit.dto;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class BusinessUnitResponseDto {
     private Long id;
     private String unitName;
     private String unitCode;
     private String description;
-    private Long organizationId;
+    private UUID organizationId;
     private String status;
     private LocalDateTime createdAt;
     private String createdBy;
@@ -18,7 +19,7 @@ public class BusinessUnitResponseDto {
     }
 
     public BusinessUnitResponseDto(Long id, String unitName, String unitCode, String description,
-                                   Long organizationId, String status, LocalDateTime createdAt,
+                                   UUID organizationId, String status, LocalDateTime createdAt,
                                    String createdBy, LocalDateTime updatedAt, String updatedBy) {
         this.id = id;
         this.unitName = unitName;
@@ -41,7 +42,7 @@ public class BusinessUnitResponseDto {
         private String unitName;
         private String unitCode;
         private String description;
-        private Long organizationId;
+        private UUID organizationId;
         private String status;
         private LocalDateTime createdAt;
         private String createdBy;
@@ -68,7 +69,7 @@ public class BusinessUnitResponseDto {
             return this;
         }
 
-        public Builder organizationId(Long organizationId) {
+        public Builder organizationId(UUID organizationId) {
             this.organizationId = organizationId;
             return this;
         }
@@ -136,11 +137,11 @@ public class BusinessUnitResponseDto {
         this.description = description;
     }
 
-    public Long getOrganizationId() {
+    public UUID getOrganizationId() {
         return organizationId;
     }
 
-    public void setOrganizationId(Long organizationId) {
+    public void setOrganizationId(UUID organizationId) {
         this.organizationId = organizationId;
     }
 
