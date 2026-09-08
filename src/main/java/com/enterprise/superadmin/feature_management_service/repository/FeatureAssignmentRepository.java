@@ -1,13 +1,14 @@
 package com.enterprise.superadmin.feature_management_service.repository;
 
-import com.enterprise.publicadmin.feature.entity.FeatureAssignment;
+
+import com.enterprise.superadmin.feature_management_service.entity.FeatureAssignment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface FeatureAssignmentRepository
+public interface FeatureAssignmentRepository<FeatureAssignment>
         extends JpaRepository<FeatureAssignment, UUID> {
 
     List<FeatureAssignment> findByFeatureId(UUID featureId);

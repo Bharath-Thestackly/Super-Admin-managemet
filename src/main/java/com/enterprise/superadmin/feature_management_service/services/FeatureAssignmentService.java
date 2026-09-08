@@ -1,14 +1,12 @@
 package com.enterprise.superadmin.feature_management_service.services;
 
-import com.enterprise.publicadmin.feature.dto.request.FeatureAssignmentRequest;
-import com.enterprise.publicadmin.feature.dto.response.FeatureAssignmentResponse;
-import com.enterprise.publicadmin.feature.entity.Feature;
-import com.enterprise.publicadmin.feature.entity.FeatureAssignment;
-import com.enterprise.publicadmin.feature.exception.FeatureConfigurationException;
-import com.enterprise.publicadmin.feature.exception.FeatureNotFoundException;
-import com.enterprise.publicadmin.feature.exception.InvalidFeatureStateException;
-import com.enterprise.publicadmin.feature.repository.FeatureAssignmentRepository;
-import com.enterprise.publicadmin.feature.repository.FeatureRepository;
+import com.enterprise.superadmin.feature_management_service.dto.request.FeatureAssignmentRequest;
+import com.enterprise.superadmin.feature_management_service.dto.response.FeatureAssignmentResponse;
+import com.enterprise.superadmin.feature_management_service.entity.Feature;
+import com.enterprise.superadmin.feature_management_service.entity.FeatureAssignment;
+import com.enterprise.superadmin.feature_management_service.exception.FeatureNotFoundException;
+import com.enterprise.superadmin.feature_management_service.repository.FeatureAssignmentRepository;
+import com.enterprise.superadmin.feature_management_service.repository.FeatureRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
