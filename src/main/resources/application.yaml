@@ -3,11 +3,13 @@ spring:
     name: platform-admin-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/enterprise_platform
+    url: jdbc:postgresql://localhost:5432/Cloud_Platform
     username: postgres
     password: Bhagi@1125
     driver-class-name: org.postgresql.Driver
 
+  flyway:
+    baseline-on-migrate: true
   jpa:
     hibernate:
       ddl-auto: validate
