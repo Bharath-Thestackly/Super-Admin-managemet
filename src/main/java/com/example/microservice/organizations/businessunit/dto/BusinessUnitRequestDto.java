@@ -2,7 +2,6 @@ package com.example.microservice.organizations.businessunit.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.util.UUID;
 
 public class BusinessUnitRequestDto {
 
@@ -15,14 +14,14 @@ public class BusinessUnitRequestDto {
     private String description;
 
     @NotNull(message = "Organization ID is required")
-    private UUID organizationId;
+    private Long organizationId;
 
     private String status = "ACTIVE";
 
     public BusinessUnitRequestDto() {
     }
 
-    public BusinessUnitRequestDto(String unitName, String unitCode, String description, UUID organizationId, String status) {
+    public BusinessUnitRequestDto(String unitName, String unitCode, String description, Long organizationId, String status) {
         this.unitName = unitName;
         this.unitCode = unitCode;
         this.description = description;
@@ -54,11 +53,11 @@ public class BusinessUnitRequestDto {
         this.description = description;
     }
 
-    public UUID getOrganizationId() {
+    public Long getOrganizationId() {
         return organizationId;
     }
 
-    public void setOrganizationId(UUID organizationId) {
+    public void setOrganizationId(Long organizationId) {
         this.organizationId = organizationId;
     }
 

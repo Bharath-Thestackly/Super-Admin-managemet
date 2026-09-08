@@ -7,7 +7,6 @@ import jakarta.persistence.Table;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 /**
  * BusinessUnit entity extending the platform's BaseEntity.
@@ -27,7 +26,7 @@ public class BusinessUnit extends BaseEntity {
     private String description;
 
     @Column(name = "organization_id", nullable = false)
-    private UUID organizationId;
+    private Long organizationId;
 
     @Column(name = "status", nullable = false)
     private String status;
@@ -46,7 +45,7 @@ public class BusinessUnit extends BaseEntity {
     }
 
     public BusinessUnit(Long id, String unitName, String unitCode, String description,
-                        UUID organizationId, String status, LocalDateTime createdAt,
+                        Long organizationId, String status, LocalDateTime createdAt,
                         String createdBy, LocalDateTime updatedAt, String updatedBy,
                         Boolean isDeleted, LocalDate deletedAt, String deletedBy,
                         String tenantId, Long version) {
@@ -77,7 +76,7 @@ public class BusinessUnit extends BaseEntity {
         private String unitName;
         private String unitCode;
         private String description;
-        private UUID organizationId;
+        private Long organizationId;
         private String status;
         private LocalDateTime createdAt;
         private String createdBy;
@@ -109,7 +108,7 @@ public class BusinessUnit extends BaseEntity {
             return this;
         }
 
-        public Builder organizationId(UUID organizationId) {
+        public Builder organizationId(Long organizationId) {
             this.organizationId = organizationId;
             return this;
         }
@@ -195,11 +194,11 @@ public class BusinessUnit extends BaseEntity {
         this.description = description;
     }
 
-    public UUID getOrganizationId() {
+    public Long getOrganizationId() {
         return organizationId;
     }
 
-    public void setOrganizationId(UUID organizationId) {
+    public void setOrganizationId(Long organizationId) {
         this.organizationId = organizationId;
     }
 

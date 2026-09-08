@@ -21,7 +21,6 @@ import org.springframework.data.domain.PageRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,14 +36,14 @@ class BusinessUnitServiceTest {
     private BusinessUnitServiceImpl service;
 
     private Long sampleId;
-    private UUID sampleOrgId;
+    private Long sampleOrgId;
     private BusinessUnit sampleEntity;
     private BusinessUnitRequestDto sampleRequest;
 
     @BeforeEach
     void setUp() {
         sampleId = 1L;
-        sampleOrgId = UUID.randomUUID();
+        sampleOrgId = 100L;
 
         sampleEntity = BusinessUnit.builder()
                 .id(sampleId)
