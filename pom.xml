@@ -24,6 +24,7 @@
     <modules>
         <module>base-service</module>
         <module>auth-service</module>
+        <module>platform-administration-service</module>
     </modules>
 
     <properties>
