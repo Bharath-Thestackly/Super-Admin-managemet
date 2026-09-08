@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: platform-admin-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/enterprise_platform
+    username: postgres
+    password: Bhagi@1125
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    open-in-view: false
+
+server:
+  port: 8081
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+  endpoint:
+    health:
+      show-details: always
