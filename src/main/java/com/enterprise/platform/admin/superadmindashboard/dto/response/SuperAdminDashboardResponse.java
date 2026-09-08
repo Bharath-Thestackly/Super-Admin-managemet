@@ -1,18 +1,35 @@
+package com.enterprise.platform.admin.superadmindashboard.dto.response;
 
-        package com.enterprise.platform.admin.superadmindashboard.dto.response;
-
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.ArrayList;
 import java.util.List;
 
+@Schema(description = "Consolidated Super Admin Dashboard Response")
 public class SuperAdminDashboardResponse {
 
+    @Schema(description = "Total number of registered tenants in the platform", example = "35")
     private Long totalTenants;
+
+    @Schema(description = "Total number of users registered across all tenants", example = "580")
     private Long totalUsers;
+
+    @Schema(description = "Total number of currently active subscriptions", example = "32")
     private Long activeSubscriptions;
+
+    @Schema(description = "Consolidated platform operational health status", example = "UP")
     private String platformHealthStatus;
+
+    @Schema(description = "Total number of real-time active user sessions", example = "142")
     private Long activeSessions;
+
+    @Schema(description = "Current platform storage utilization percentage", example = "68.5")
     private Double storageUtilization;
-    private List<String> systemAlerts;
-    private List<String> recentActivities;
+
+    @Schema(description = "List of current platform and dependency alerts")
+    private List<String> systemAlerts = new ArrayList<>();
+
+    @Schema(description = "Recent administrative activities and tenant events")
+    private List<String> recentActivities = new ArrayList<>();
 
     public SuperAdminDashboardResponse() {
     }
@@ -26,15 +43,14 @@ public class SuperAdminDashboardResponse {
             Double storageUtilization,
             List<String> systemAlerts,
             List<String> recentActivities) {
-
         this.totalTenants = totalTenants;
         this.totalUsers = totalUsers;
         this.activeSubscriptions = activeSubscriptions;
         this.platformHealthStatus = platformHealthStatus;
         this.activeSessions = activeSessions;
         this.storageUtilization = storageUtilization;
-        this.systemAlerts = systemAlerts;
-        this.recentActivities = recentActivities;
+        this.systemAlerts = systemAlerts != null ? systemAlerts : new ArrayList<>();
+        this.recentActivities = recentActivities != null ? recentActivities : new ArrayList<>();
     }
 
     public Long getTotalTenants() {
@@ -101,4 +117,3 @@ public class SuperAdminDashboardResponse {
         this.recentActivities = recentActivities;
     }
 }
-
