@@ -55,6 +55,9 @@ spring:
 
 # Application Configuration
 app:
+  security:
+    common-jwt-filter:
+      enabled: false
   tenant:
     default-tenant: ${DEFAULT_TENANT_ID:default}
     header-name: ${TENANT_HEADER_NAME:X-Tenant-ID}
