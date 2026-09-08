@@ -1,8 +1,10 @@
 package com.enterprise.superadmin.platform_branding_service.dto.response;
 
+import java.util.UUID;
+
 public class BrandingResponse {
 
-    private Long id;
+    private UUID id;
 
     private String brandName;
 
@@ -20,7 +22,7 @@ public class BrandingResponse {
     }
 
     public BrandingResponse(
-            Long id,
+            UUID id,
             String brandName,
             String logoUrl,
             String primaryColor,
@@ -37,11 +39,11 @@ public class BrandingResponse {
         this.status = status;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
