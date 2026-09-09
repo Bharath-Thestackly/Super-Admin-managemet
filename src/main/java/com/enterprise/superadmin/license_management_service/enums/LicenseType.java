@@ -1,4 +1,10 @@
 package com.enterprise.superadmin.license_management_service.enums;
 
-public class LicenseType {
+
+public enum LicenseType {
+
+    SUBSCRIPTION,
+    PERPETUAL,
+    TRIAL,
+    ENTERPRISE
 }
