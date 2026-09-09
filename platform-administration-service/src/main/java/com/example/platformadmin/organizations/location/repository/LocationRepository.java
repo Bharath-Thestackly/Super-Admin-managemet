@@ -1,6 +1,6 @@
-package com.example.microservice.organizations.location.repository;
+package com.example.platformadmin.organizations.location.repository;
 
-import com.example.microservice.organizations.location.entity.LocationEntity;
+import com.example.platformadmin.organizations.location.entity.LocationEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,5 +25,8 @@ public interface LocationRepository extends JpaRepository<LocationEntity, Long> 
                OR LOWER(l.state) LIKE LOWER(CONCAT('%', :query, '%'))
                OR LOWER(l.country) LIKE LOWER(CONCAT('%', :query, '%'))
             """)
-    Page<LocationEntity> search(@Param("query") String query, Pageable pageable);
+    Page<LocationEntity> search(
+            @Param("query") String query,
+            Pageable pageable
+    );
 }

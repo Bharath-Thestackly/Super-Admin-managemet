@@ -1,6 +1,6 @@
-package com.example.microservice.organizations.location.entity;
+package com.example.platformadmin.organizations.location.entity;
 
-import com.example.microservice.common.abstracts.BaseEntity;
+import com.example.common.abstracts.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -47,7 +47,7 @@ public class LocationEntity extends BaseEntity {
 
     @Column(name = "active", nullable = false)
     private Boolean active = true;
-    
+
     @Column(name = "status", length = 255)
     private String status;
 
@@ -166,7 +166,7 @@ public class LocationEntity extends BaseEntity {
     public void setActive(Boolean active) {
         this.active = active;
     }
-    
+
     public String getStatus() {
         return status;
     }

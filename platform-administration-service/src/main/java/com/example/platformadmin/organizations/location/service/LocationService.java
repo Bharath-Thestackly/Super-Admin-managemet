@@ -1,10 +1,10 @@
-package com.example.microservice.organizations.location.service;
+package com.example.platformadmin.organizations.location.service;
 
-import com.example.microservice.common.abstracts.AbstractService;
-import com.example.microservice.organizations.location.dto.LocationRequestDto;
-import com.example.microservice.organizations.location.dto.LocationResponseDto;
-import com.example.microservice.organizations.location.entity.LocationEntity;
-import com.example.microservice.organizations.location.repository.LocationRepository;
+import com.example.common.abstracts.AbstractService;
+import com.example.platformadmin.organizations.location.dto.LocationRequestDto;
+import com.example.platformadmin.organizations.location.dto.LocationResponseDto;
+import com.example.platformadmin.organizations.location.entity.LocationEntity;
+import com.example.platformadmin.organizations.location.repository.LocationRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -48,11 +48,11 @@ public class LocationService extends AbstractService<
         entity.setLocationCode(dto.getLocationCode());
         entity.setLocationName(dto.getLocationName());
 
-        if (dto.getActive() != null) {
-            entity.setActive(dto.getActive());
-        } else {
-            entity.setActive(true);
-        }
+        entity.setActive(
+                dto.getActive() != null
+                        ? dto.getActive()
+                        : true
+        );
 
         return entity;
     }
@@ -76,14 +76,13 @@ public class LocationService extends AbstractService<
         dto.setCompanyId(entity.getCompanyId());
         dto.setBranchId(entity.getBranchId());
         dto.setActive(entity.getActive());
-
-        dto.setCreatedAt(entity.getCreatedAt());
-        dto.setUpdatedAt(entity.getUpdatedAt());
         dto.setStatus(entity.getStatus());
         dto.setLatitude(entity.getLatitude());
         dto.setLongitude(entity.getLongitude());
         dto.setLocationCode(entity.getLocationCode());
         dto.setLocationName(entity.getLocationName());
+        dto.setCreatedAt(entity.getCreatedAt());
+        dto.setUpdatedAt(entity.getUpdatedAt());
 
         return dto;
     }
@@ -120,13 +119,15 @@ public class LocationService extends AbstractService<
             String query,
             Pageable pageable) {
 
-        return locationRepository.search(query, pageable)
+        return locationRepository
+                .search(query, pageable)
                 .map(this::toDto);
     }
 
     public List<LocationResponseDto> getByCompanyId(Long companyId) {
 
-        return locationRepository.findByCompanyId(companyId)
+        return locationRepository
+                .findByCompanyId(companyId)
                 .stream()
                 .map(this::toDto)
                 .toList();
@@ -134,7 +135,8 @@ public class LocationService extends AbstractService<
 
     public List<LocationResponseDto> getByBranchId(Long branchId) {
 
-        return locationRepository.findByBranchId(branchId)
+        return locationRepository
+                .findByBranchId(branchId)
                 .stream()
                 .map(this::toDto)
                 .toList();

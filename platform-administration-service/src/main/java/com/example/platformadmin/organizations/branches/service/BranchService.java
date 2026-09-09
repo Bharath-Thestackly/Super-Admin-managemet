@@ -1,10 +1,10 @@
-package com.example.microservice.organisations.branches.service;
+package com.example.platformadmin.organizations.branches.service;
 
-import com.example.microservice.organisations.branches.dto.BranchRequestDTO;
-import com.example.microservice.organisations.branches.dto.BranchResponseDTO;
-import com.example.microservice.organisations.branches.entity.BranchEntity;
-import com.example.microservice.organisations.branches.repository.BranchRepository;
-import com.example.microservice.common.abstracts.AbstractService;
+import com.example.common.abstracts.AbstractService;
+import com.example.platformadmin.organizations.branches.dto.BranchRequestDTO;
+import com.example.platformadmin.organizations.branches.dto.BranchResponseDTO;
+import com.example.platformadmin.organizations.branches.entity.BranchEntity;
+import com.example.platformadmin.organizations.branches.repository.BranchRepository;
 import org.springframework.stereotype.Service;
 
 @Service

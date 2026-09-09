@@ -1,6 +1,6 @@
-package com.example.microservice.organisations.branches.repository;
+package com.example.platformadmin.organizations.branches.repository;
 
-import com.example.microservice.organisations.branches.entity.BranchEntity;
+import com.example.platformadmin.organizations.branches.entity.BranchEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

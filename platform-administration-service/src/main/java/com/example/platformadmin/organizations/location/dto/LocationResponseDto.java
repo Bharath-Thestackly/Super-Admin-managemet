@@ -1,7 +1,10 @@
-package com.example.microservice.organizations.location.dto;
+package com.example.platformadmin.organizations.location.dto;
 
-public class LocationRequestDto {
+import java.time.LocalDateTime;
 
+public class LocationResponseDto {
+
+    private Long id;
     private String name;
     private String code;
     private String addressLine1;
@@ -20,6 +23,16 @@ public class LocationRequestDto {
     private Double longitude;
     private String locationCode;
     private String locationName;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -124,7 +137,7 @@ public class LocationRequestDto {
     public void setActive(Boolean active) {
         this.active = active;
     }
-    
+
     public String getStatus() {
         return status;
     }
@@ -163,5 +176,21 @@ public class LocationRequestDto {
 
     public void setLocationName(String locationName) {
         this.locationName = locationName;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
