@@ -1,4 +1,4 @@
-package com.enterprise.superadmin.platform_branding_service.service;
+package com.enterprise.superadmin.platform_branding_service.service.impl;
 
 import com.enterprise.superadmin.platform_branding_service.dto.request.BrandingCreateRequest;
 import com.enterprise.superadmin.platform_branding_service.dto.request.BrandingUpdateRequest;
@@ -135,10 +135,7 @@ public class BrandingServiceImpl implements BrandingService {
 
         BrandingResponse response = buildResponse();
 
-        log.info(
-                "Platform branding fetched successfully. status={}",
-                response.getStatus()
-        );
+        log.info("Platform branding fetched successfully. status={}", response.getStatus());
 
         return response;
     }
@@ -149,122 +146,37 @@ public class BrandingServiceImpl implements BrandingService {
 
     @Override
     @Transactional
-    public BrandingResponse createBranding(
-            BrandingCreateRequest request) {
+    public BrandingResponse createBranding(BrandingCreateRequest request) {
 
         log.info("Starting platform branding initialization");
 
         validateCreateRequest(request);
 
-        Map<String, String> existingBranding =
-                loadBrandingValues();
+        Map<String, String> existingBranding = loadBrandingValues();
 
         if (!existingBranding.isEmpty()) {
-            throw new BrandingAlreadyExistsException(
-                    "Platform branding configuration already exists"
-            );
+            throw new BrandingAlreadyExistsException("Platform branding configuration already exists");
         }
 
         String actor = getCurrentActor();
 
-        save(
-                KEY_PLATFORM_NAME,
-                normalize(request.getPlatformName()),
-                actor
-        );
-
-        save(
-                KEY_COMPANY_NAME,
-                normalize(request.getCompanyName()),
-                actor
-        );
-
-        save(
-                KEY_TAGLINE,
-                normalize(request.getTagline()),
-                actor
-        );
-
-        save(
-                KEY_LOGO_URL,
-                normalize(request.getLogoUrl()),
-                actor
-        );
-
-        save(
-                KEY_LOGIN_BACKGROUND_URL,
-                normalize(request.getLoginBackgroundUrl()),
-                actor
-        );
-
-        save(
-                KEY_WELCOME_MESSAGE,
-                normalize(request.getWelcomeMessage()),
-                actor
-        );
-
-        save(
-                KEY_PRIMARY_COLOR,
-                normalize(request.getPrimaryColor()),
-                actor
-        );
-
-        save(
-                KEY_SECONDARY_COLOR,
-                normalize(request.getSecondaryColor()),
-                actor
-        );
-
-        save(
-                KEY_ACCENT_COLOR,
-                normalize(request.getAccentColor()),
-                actor
-        );
-
-        save(
-                KEY_THEME,
-                normalizeTheme(request.getTheme()),
-                actor
-        );
-
-        save(
-                KEY_FAVICON_URL,
-                normalize(request.getFaviconUrl()),
-                actor
-        );
-
-        save(
-                KEY_EMAIL_HEADER_LOGO_URL,
-                normalize(request.getEmailHeaderLogoUrl()),
-                actor
-        );
-
-        save(
-                KEY_FOOTER_TEXT,
-                normalize(request.getFooterText()),
-                actor
-        );
-
-        save(
-                KEY_COPYRIGHT_TEXT,
-                normalize(request.getCopyrightText()),
-                actor
-        );
-
-        save(
-                KEY_STATUS,
-                STATUS_DRAFT,
-                actor
-        );
-
-        recordAudit(
-                ACTION_CREATED,
-                actor
-        );
-
-        log.info(
-                "Platform branding initialization completed successfully"
-        );
+        save(KEY_PLATFORM_NAME, normalize(request.getPlatformName()), actor);
+        save(KEY_COMPANY_NAME, normalize(request.getCompanyName()), actor);
+        save(KEY_TAGLINE, normalize(request.getTagline()), actor);
+        save(KEY_LOGO_URL, normalize(request.getLogoUrl()), actor);
+        save(KEY_LOGIN_BACKGROUND_URL, normalize(request.getLoginBackgroundUrl()), actor);
+        save(KEY_WELCOME_MESSAGE, normalize(request.getWelcomeMessage()), actor);
+        save(KEY_PRIMARY_COLOR, normalize(request.getPrimaryColor()), actor);
+        save(KEY_SECONDARY_COLOR, normalize(request.getSecondaryColor()), actor);
+        save(KEY_ACCENT_COLOR, normalize(request.getAccentColor()), actor);
+        save(KEY_THEME, normalizeTheme(request.getTheme()), actor);
+        save(KEY_FAVICON_URL, normalize(request.getFaviconUrl()), actor);
+        save(KEY_EMAIL_HEADER_LOGO_URL, normalize(request.getEmailHeaderLogoUrl()), actor);
+        save(KEY_FOOTER_TEXT, normalize(request.getFooterText()), actor);
+        save(KEY_COPYRIGHT_TEXT, normalize(request.getCopyrightText()), actor);
+        save(KEY_STATUS, STATUS_DRAFT, actor);
+        recordAudit(ACTION_CREATED, actor);
+        log.info("Platform branding initialization completed successfully");
 
         return buildResponse();
     }
@@ -275,117 +187,38 @@ public class BrandingServiceImpl implements BrandingService {
 
     @Override
     @Transactional
-    public BrandingResponse updateBranding(
-            BrandingUpdateRequest request) {
+    public BrandingResponse updateBranding(BrandingUpdateRequest request) {
 
         log.info("Starting platform branding update");
 
         validateUpdateRequest(request);
 
-        Map<String, String> existingBranding =
-                loadBrandingValues();
+        Map<String, String> existingBranding = loadBrandingValues();
 
         if (existingBranding.isEmpty()) {
-            throw new BrandingNotFoundException(
-                    "Platform branding configuration not found"
-            );
+            throw new BrandingNotFoundException("Platform branding configuration not found");
         }
 
         String actor = getCurrentActor();
 
-        updateIfPresent(
-                KEY_PLATFORM_NAME,
-                request.getPlatformName(),
-                actor
-        );
+        updateIfPresent(KEY_PLATFORM_NAME, request.getPlatformName(), actor);
+        updateIfPresent(KEY_COMPANY_NAME, request.getCompanyName(), actor);
+        updateIfPresent(KEY_TAGLINE, request.getTagline(), actor);
+        updateIfPresent(KEY_LOGO_URL, request.getLogoUrl(), actor);
+        updateIfPresent(KEY_LOGIN_BACKGROUND_URL, request.getLoginBackgroundUrl(), actor);
+        updateIfPresent(KEY_WELCOME_MESSAGE, request.getWelcomeMessage(), actor);
+        updateIfPresent(KEY_PRIMARY_COLOR, request.getPrimaryColor(), actor);
+        updateIfPresent(KEY_SECONDARY_COLOR, request.getSecondaryColor(), actor);
+        updateIfPresent(KEY_ACCENT_COLOR, request.getAccentColor(), actor);
+        updateIfPresent(KEY_THEME, normalizeTheme(request.getTheme()), actor);
+        updateIfPresent(KEY_FAVICON_URL, request.getFaviconUrl(), actor);
+        updateIfPresent(KEY_EMAIL_HEADER_LOGO_URL, request.getEmailHeaderLogoUrl(), actor);
+        updateIfPresent(KEY_FOOTER_TEXT, request.getFooterText(), actor);
+        updateIfPresent(KEY_COPYRIGHT_TEXT, request.getCopyrightText(), actor);
 
-        updateIfPresent(
-                KEY_COMPANY_NAME,
-                request.getCompanyName(),
-                actor
-        );
+        recordAudit(ACTION_UPDATED, actor);
 
-        updateIfPresent(
-                KEY_TAGLINE,
-                request.getTagline(),
-                actor
-        );
-
-        updateIfPresent(
-                KEY_LOGO_URL,
-                request.getLogoUrl(),
-                actor
-        );
-
-        updateIfPresent(
-                KEY_LOGIN_BACKGROUND_URL,
-                request.getLoginBackgroundUrl(),
-                actor
-        );
-
-        updateIfPresent(
-                KEY_WELCOME_MESSAGE,
-                request.getWelcomeMessage(),
-                actor
-        );
-
-        updateIfPresent(
-                KEY_PRIMARY_COLOR,
-                request.getPrimaryColor(),
-                actor
-        );
-
-        updateIfPresent(
-                KEY_SECONDARY_COLOR,
-                request.getSecondaryColor(),
-                actor
-        );
-
-        updateIfPresent(
-                KEY_ACCENT_COLOR,
-                request.getAccentColor(),
-                actor
-        );
-
-        updateIfPresent(
-                KEY_THEME,
-                normalizeTheme(request.getTheme()),
-                actor
-        );
-
-        updateIfPresent(
-                KEY_FAVICON_URL,
-                request.getFaviconUrl(),
-                actor
-        );
-
-        updateIfPresent(
-                KEY_EMAIL_HEADER_LOGO_URL,
-                request.getEmailHeaderLogoUrl(),
-                actor
-        );
-
-        updateIfPresent(
-                KEY_FOOTER_TEXT,
-                request.getFooterText(),
-                actor
-        );
-
-        updateIfPresent(
-                KEY_COPYRIGHT_TEXT,
-                request.getCopyrightText(),
-                actor
-        );
-
-        recordAudit(
-                ACTION_UPDATED,
-                actor
-        );
-
-        log.info(
-                "Platform branding update completed successfully"
-        );
-
+        log.info("Platform branding update completed successfully");
         return buildResponse();
     }
 
@@ -399,13 +232,10 @@ public class BrandingServiceImpl implements BrandingService {
 
         log.info("Starting platform branding reset");
 
-        Map<String, String> existingBranding =
-                loadBrandingValues();
+        Map<String, String> existingBranding = loadBrandingValues();
 
         if (existingBranding.isEmpty()) {
-            throw new BrandingNotFoundException(
-                    "Platform branding configuration not found"
-            );
+            throw new BrandingNotFoundException("Platform branding configuration not found");
         }
 
         String actor = getCurrentActor();
@@ -417,104 +247,24 @@ public class BrandingServiceImpl implements BrandingService {
          * production release.
          */
 
-        save(
-                KEY_PLATFORM_NAME,
-                "Platform",
-                actor
-        );
+        save(KEY_PLATFORM_NAME, "Platform", actor);
+        save(KEY_COMPANY_NAME, null, actor);
+        save(KEY_TAGLINE, null, actor);
+        save(KEY_LOGO_URL, null, actor);
+        save(KEY_LOGIN_BACKGROUND_URL, null, actor);
+        save(KEY_WELCOME_MESSAGE, null, actor);
+        save(KEY_PRIMARY_COLOR, "#0052CC", actor);
+        save(KEY_SECONDARY_COLOR, "#172B4D", actor);
+        save(KEY_ACCENT_COLOR, null, actor);
+        save(KEY_THEME, "LIGHT", actor);
+        save(KEY_FAVICON_URL, null, actor);
+        save(KEY_EMAIL_HEADER_LOGO_URL, null, actor);
+        save(KEY_FOOTER_TEXT, null, actor);
+        save(KEY_COPYRIGHT_TEXT, null, actor);
+        save(KEY_STATUS, STATUS_DRAFT, actor);
+        recordAudit(ACTION_RESET, actor);
 
-        save(
-                KEY_COMPANY_NAME,
-                null,
-                actor
-        );
-
-        save(
-                KEY_TAGLINE,
-                null,
-                actor
-        );
-
-        save(
-                KEY_LOGO_URL,
-                null,
-                actor
-        );
-
-        save(
-                KEY_LOGIN_BACKGROUND_URL,
-                null,
-                actor
-        );
-
-        save(
-                KEY_WELCOME_MESSAGE,
-                null,
-                actor
-        );
-
-        save(
-                KEY_PRIMARY_COLOR,
-                "#0052CC",
-                actor
-        );
-
-        save(
-                KEY_SECONDARY_COLOR,
-                "#172B4D",
-                actor
-        );
-
-        save(
-                KEY_ACCENT_COLOR,
-                null,
-                actor
-        );
-
-        save(
-                KEY_THEME,
-                "LIGHT",
-                actor
-        );
-
-        save(
-                KEY_FAVICON_URL,
-                null,
-                actor
-        );
-
-        save(
-                KEY_EMAIL_HEADER_LOGO_URL,
-                null,
-                actor
-        );
-
-        save(
-                KEY_FOOTER_TEXT,
-                null,
-                actor
-        );
-
-        save(
-                KEY_COPYRIGHT_TEXT,
-                null,
-                actor
-        );
-
-        save(
-                KEY_STATUS,
-                STATUS_DRAFT,
-                actor
-        );
-
-        recordAudit(
-                ACTION_RESET,
-                actor
-        );
-
-        log.info(
-                "Platform branding reset completed successfully"
-        );
+        log.info("Platform branding reset completed successfully");
 
         return buildResponse();
     }
@@ -524,80 +274,33 @@ public class BrandingServiceImpl implements BrandingService {
     // =====================================================================
 
     @Override
-    public BrandingResponse previewBranding(
-            BrandingUpdateRequest request) {
+    public BrandingResponse previewBranding(BrandingUpdateRequest request) {
 
         log.info("Generating platform branding preview");
 
         validateUpdateRequest(request);
 
-        BrandingResponse current =
-                buildResponse();
+        BrandingResponse current = buildResponse();
 
-        BrandingResponse preview =
-                new BrandingResponse(
-                        choose(
-                                request.getPlatformName(),
-                                current.getPlatformName()
-                        ),
-                        choose(
-                                request.getCompanyName(),
-                                current.getCompanyName()
-                        ),
-                        choose(
-                                request.getTagline(),
-                                current.getTagline()
-                        ),
-                        choose(
-                                request.getLogoUrl(),
-                                current.getLogoUrl()
-                        ),
-                        choose(
-                                request.getLoginBackgroundUrl(),
-                                current.getLoginBackgroundUrl()
-                        ),
-                        choose(
-                                request.getWelcomeMessage(),
-                                current.getWelcomeMessage()
-                        ),
-                        choose(
-                                request.getPrimaryColor(),
-                                current.getPrimaryColor()
-                        ),
-                        choose(
-                                request.getSecondaryColor(),
-                                current.getSecondaryColor()
-                        ),
-                        choose(
-                                request.getAccentColor(),
-                                current.getAccentColor()
-                        ),
-                        choose(
-                                normalizeTheme(request.getTheme()),
-                                current.getTheme()
-                        ),
-                        choose(
-                                request.getFaviconUrl(),
-                                current.getFaviconUrl()
-                        ),
-                        choose(
-                                request.getEmailHeaderLogoUrl(),
-                                current.getEmailHeaderLogoUrl()
-                        ),
-                        choose(
-                                request.getFooterText(),
-                                current.getFooterText()
-                        ),
-                        choose(
-                                request.getCopyrightText(),
-                                current.getCopyrightText()
-                        ),
+        BrandingResponse preview = new BrandingResponse(
+                        choose(request.getPlatformName(), current.getPlatformName()),
+                        choose(request.getCompanyName(), current.getCompanyName()),
+                        choose(request.getTagline(), current.getTagline()),
+                        choose(request.getLogoUrl(), current.getLogoUrl()),
+                        choose(request.getLoginBackgroundUrl(), current.getLoginBackgroundUrl()),
+                        choose(request.getWelcomeMessage(), current.getWelcomeMessage()),
+                        choose(request.getPrimaryColor(), current.getPrimaryColor()),
+                        choose(request.getSecondaryColor(), current.getSecondaryColor()),
+                        choose(request.getAccentColor(), current.getAccentColor()),
+                        choose(normalizeTheme(request.getTheme()), current.getTheme()),
+                        choose(request.getFaviconUrl(), current.getFaviconUrl()),
+                        choose(request.getEmailHeaderLogoUrl(), current.getEmailHeaderLogoUrl()),
+                        choose(request.getFooterText(), current.getFooterText()),
+                        choose(request.getCopyrightText(), current.getCopyrightText()),
                         current.getStatus()
                 );
 
-        log.info(
-                "Platform branding preview generated successfully"
-        );
+        log.info("Platform branding preview generated successfully");
 
         return preview;
     }
@@ -612,48 +315,26 @@ public class BrandingServiceImpl implements BrandingService {
 
         log.info("Publishing platform branding");
 
-        BrandingResponse current =
-                buildResponse();
+        BrandingResponse current = buildResponse();
 
         if (!StringUtils.hasText(current.getStatus())) {
-            throw new BrandingNotFoundException(
-                    "Platform branding configuration not found"
-            );
+            throw new BrandingNotFoundException("Platform branding configuration not found");
         }
 
-        if (STATUS_PUBLISHED.equalsIgnoreCase(
-                current.getStatus())) {
-
-            throw new BrandingInvalidStateException(
-                    "Platform branding is already published"
-            );
+        if (STATUS_PUBLISHED.equalsIgnoreCase(current.getStatus())) {
+            throw new BrandingInvalidStateException("Platform branding is already published");
         }
 
-        if (!STATUS_DRAFT.equalsIgnoreCase(
-                current.getStatus())) {
-
-            throw new BrandingInvalidStateException(
-                    "Platform branding cannot be published from status: "
-                            + current.getStatus()
-            );
+        if (!STATUS_DRAFT.equalsIgnoreCase(current.getStatus())) {
+            throw new BrandingInvalidStateException("Platform branding cannot be published from status: " + current.getStatus());
         }
 
         String actor = getCurrentActor();
 
-        save(
-                KEY_STATUS,
-                STATUS_PUBLISHED,
-                actor
-        );
+        save(KEY_STATUS, STATUS_PUBLISHED, actor);
 
-        recordAudit(
-                ACTION_PUBLISHED,
-                actor
-        );
-
-        log.info(
-                "Platform branding published successfully"
-        );
+        recordAudit(ACTION_PUBLISHED, actor);
+        log.info("Platform branding published successfully");
 
         return buildResponse();
     }
@@ -662,34 +343,17 @@ public class BrandingServiceImpl implements BrandingService {
     // CREATE VALIDATION
     // =====================================================================
 
-    private void validateCreateRequest(
-            BrandingCreateRequest request) {
+    private void validateCreateRequest(BrandingCreateRequest request) {
 
         if (request == null) {
-            throw new IllegalArgumentException(
-                    "Branding create request must not be null"
-            );
+            throw new IllegalArgumentException("Branding create request must not be null");
         }
 
-        validationService.validatePlatformName(
-                request.getPlatformName()
-        );
-
-        validationService.validateCompanyName(
-                request.getCompanyName()
-        );
-
-        validationService.validateWelcomeMessage(
-                request.getWelcomeMessage()
-        );
-
-        validationService.validateFooterText(
-                request.getFooterText()
-        );
-
-        validationService.validateCopyrightText(
-                request.getCopyrightText()
-        );
+        validationService.validatePlatformName(request.getPlatformName());
+        validationService.validateCompanyName(request.getCompanyName());
+        validationService.validateWelcomeMessage(request.getWelcomeMessage());
+        validationService.validateFooterText(request.getFooterText());
+        validationService.validateCopyrightText(request.getCopyrightText());
     }
 
     // =====================================================================
@@ -700,66 +364,43 @@ public class BrandingServiceImpl implements BrandingService {
             BrandingUpdateRequest request) {
 
         if (request == null) {
-            throw new IllegalArgumentException(
-                    "Branding update request must not be null"
-            );
+            throw new IllegalArgumentException("Branding update request must not be null");
         }
 
         if (request.getPlatformName() != null) {
-            validationService.validatePlatformName(
-                    request.getPlatformName()
-            );
+            validationService.validatePlatformName(request.getPlatformName());
         }
 
         if (request.getCompanyName() != null) {
-            validationService.validateCompanyName(
-                    request.getCompanyName()
-            );
+            validationService.validateCompanyName(request.getCompanyName());
         }
 
         if (request.getWelcomeMessage() != null) {
-            validationService.validateWelcomeMessage(
-                    request.getWelcomeMessage()
-            );
+            validationService.validateWelcomeMessage(request.getWelcomeMessage());
         }
 
         if (request.getFooterText() != null) {
-            validationService.validateFooterText(
-                    request.getFooterText()
-            );
+            validationService.validateFooterText(request.getFooterText());
         }
 
         if (request.getCopyrightText() != null) {
-            validationService.validateCopyrightText(
-                    request.getCopyrightText()
-            );
+            validationService.validateCopyrightText(request.getCopyrightText());
         }
 
         if (request.getPrimaryColor() != null) {
-            validationService.validateHexColor(
-                    "primary_color",
-                    request.getPrimaryColor()
-            );
+            validationService.validateHexColor("primary_color", request.getPrimaryColor());
         }
 
         if (request.getSecondaryColor() != null) {
-            validationService.validateHexColor(
-                    "secondary_color",
-                    request.getSecondaryColor()
-            );
+            validationService.validateHexColor("secondary_color", request.getSecondaryColor());
         }
 
         if (request.getAccentColor() != null) {
-            validationService.validateHexColor(
-                    "accent_color",
-                    request.getAccentColor()
-            );
+            validationService.validateHexColor("accent_color", request.getAccentColor());
         }
 
         if (request.getTheme() != null) {
-            validationService.validateTheme(
-                    request.getTheme()
-            );
+            validationService.validateTheme(request.getTheme());
         }
     }
 
@@ -767,42 +408,22 @@ public class BrandingServiceImpl implements BrandingService {
     // PERSISTENCE
     // =====================================================================
 
-    private void updateIfPresent(
-            String key,
-            String value,
-            String actor) {
+    private void updateIfPresent(String key, String value, String actor) {
 
         if (value == null) {
             return;
         }
-
-        save(
-                key,
-                normalize(value),
-                actor
-        );
+        save(key, normalize(value), actor);
     }
 
-    private void save(
-            String key,
-            String value,
-            String actor) {
+    private void save(String key, String value, String actor) {
 
         Optional<Configuration> existing =
-                configurationRepository
-                        .findByConfigKeyAndCategoryAndScopeAndIsDeletedFalse(
-                                key,
-                                CATEGORY,
-                                SCOPE
-                        );
+                configurationRepository.findByConfigKeyAndCategoryAndScopeAndIsDeletedFalse(key, CATEGORY, SCOPE);
 
-        Configuration configuration =
-                existing.orElseGet(
-                        Configuration::new
-                );
+        Configuration configuration = existing.orElseGet(Configuration::new);
 
-        boolean newConfiguration =
-                existing.isEmpty();
+        boolean newConfiguration = existing.isEmpty();
 
         configuration.setConfigKey(key);
         configuration.setConfigValue(value);
@@ -833,8 +454,7 @@ public class BrandingServiceImpl implements BrandingService {
      */
     private BrandingResponse buildResponse() {
 
-        Map<String, String> brandingValues =
-                loadBrandingValues();
+        Map<String, String> brandingValues = loadBrandingValues();
 
         return new BrandingResponse(
                 brandingValues.get(KEY_PLATFORM_NAME),
@@ -861,39 +481,22 @@ public class BrandingServiceImpl implements BrandingService {
      */
     private Map<String, String> loadBrandingValues() {
 
-        log.debug(
-                "Loading platform branding configurations. " +
-                        "category={}, scope={}",
-                CATEGORY,
-                SCOPE
-        );
+        log.debug("Loading platform branding configurations. " + "category={}, scope={}", CATEGORY, SCOPE);
 
         List<Configuration> configurations =
-                configurationRepository
-                        .findByCategoryAndScopeAndIsDeletedFalse(
-                                CATEGORY,
-                                SCOPE
-                        );
+                configurationRepository.findByCategoryAndScopeAndIsDeletedFalse(CATEGORY, SCOPE);
 
-        Map<String, String> brandingValues =
-                new HashMap<>(configurations.size());
+        Map<String, String> brandingValues = new HashMap<>(configurations.size());
 
         for (Configuration configuration : configurations) {
 
             if (configuration.getConfigKey() == null) {
                 continue;
             }
-
-            brandingValues.put(
-                    configuration.getConfigKey(),
-                    configuration.getConfigValue()
-            );
+            brandingValues.put(configuration.getConfigKey(), configuration.getConfigValue());
         }
 
-        log.debug(
-                "Loaded {} platform branding configuration values",
-                brandingValues.size()
-        );
+        log.debug("Loaded {} platform branding configuration values", brandingValues.size());
 
         return brandingValues;
     }
@@ -906,9 +509,7 @@ public class BrandingServiceImpl implements BrandingService {
      * Records a successful branding administrative action through
      * the approved audit integration contract.
      */
-    private void recordAudit(
-            String action,
-            String actorId) {
+    private void recordAudit(String action, String actorId) {
 
         auditLogClient.record(
                 actorId,
@@ -920,11 +521,7 @@ public class BrandingServiceImpl implements BrandingService {
                 LocalDateTime.now()
         );
 
-        log.debug(
-                "Branding audit recorded. action={}, actor={}",
-                action,
-                actorId
-        );
+        log.debug("Branding audit recorded. action={}, actor={}", action, actorId);
     }
 
     // =====================================================================
@@ -949,13 +546,8 @@ public class BrandingServiceImpl implements BrandingService {
         return theme.trim().toUpperCase();
     }
 
-    private String choose(
-            String requestedValue,
-            String currentValue) {
-
-        return requestedValue != null
-                ? normalize(requestedValue)
-                : currentValue;
+    private String choose(String requestedValue, String currentValue) {
+        return requestedValue != null ? normalize(requestedValue) : currentValue;
     }
 
     /**
@@ -963,13 +555,10 @@ public class BrandingServiceImpl implements BrandingService {
      */
     private String getCurrentActor() {
 
-        String actor =
-                currentUserProvider.getCurrentUserId();
+        String actor = currentUserProvider.getCurrentUserId();
 
         if (!StringUtils.hasText(actor)) {
-            throw new IllegalStateException(
-                    "Authenticated user ID is not available"
-            );
+            throw new IllegalStateException("Authenticated user ID is not available");
         }
 
         return actor.trim();
