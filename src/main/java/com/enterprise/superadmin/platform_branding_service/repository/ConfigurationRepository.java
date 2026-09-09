@@ -9,23 +9,32 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface ConfigurationRepository
-        extends JpaRepository<Configuration, UUID> {
+public interface ConfigurationRepository extends JpaRepository<Configuration, UUID> {
 
-    Optional<Configuration> findByConfigKeyAndIsDeletedFalse(
-            String configKey
-    );
+    /**
+     * Find an active configuration by its complete logical identity.
+     *
+     * Logical identity:
+     * - configKey
+     * - category
+     * - scope
+     * - not deleted
+     */
+    Optional<Configuration> findByConfigKeyAndCategoryAndScopeAndIsDeletedFalse(String configKey, String category, String scope);
 
-    List<Configuration> findByCategoryAndIsDeletedFalse(
-            String category
-    );
+    /**
+     * Return all active configurations belonging to a category.
+     */
+    List<Configuration> findByCategoryAndIsDeletedFalse(String category);
 
-    List<Configuration> findByCategoryAndScopeAndIsDeletedFalse(
-            String category,
-            String scope
-    );
+    /**
+     * Return all active configurations for a category and scope.
+     */
+    List<Configuration> findByCategoryAndScopeAndIsDeletedFalse(String category, String scope);
 
-    boolean existsByConfigKeyAndIsDeletedFalse(
-            String configKey
-    );
+    /**
+     * Check whether an active configuration exists
+     * for the complete logical identity.
+     */
+    boolean existsByConfigKeyAndCategoryAndScopeAndIsDeletedFalse(String configKey, String category, String scope);
 }
