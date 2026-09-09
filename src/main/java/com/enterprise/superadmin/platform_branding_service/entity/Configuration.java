@@ -1,6 +1,12 @@
 package com.enterprise.superadmin.platform_branding_service.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -49,8 +55,8 @@ public class Configuration {
     @Column(name = "deleted_by", length = 50)
     private String deletedBy;
 
-
-    // Getters and Setters
+    public Configuration() {
+    }
 
     public UUID getId() {
         return id;
@@ -136,8 +142,8 @@ public class Configuration {
         return isDeleted;
     }
 
-    public void setIsDeleted(Boolean deleted) {
-        isDeleted = deleted;
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
     public LocalDate getDeletedAt() {
