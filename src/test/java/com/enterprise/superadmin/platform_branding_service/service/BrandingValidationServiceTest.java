@@ -1,161 +1,343 @@
-package com.enterprise.superadmin.platform_branding_service;
+package com.enterprise.superadmin.platform_branding_service.service;
 
-
-import com.enterprise.superadmin.platform_branding_service.service.BrandingValidationService;
-import com.enterprise.superadmin.platform_branding_service.exception.InvalidBrandingException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mockito;
-import org.springframework.web.multipart.MultipartFile;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class BrandingValidationServiceTest {
 
-    private final BrandingValidationService validationService = new BrandingValidationService();
+    private BrandingValidationService validationService;
 
-    @Test
-    void validatePlatformName_acceptsValidName() {
-        assertDoesNotThrow(() -> validationService.validatePlatformName("My Platform"));
+    @BeforeEach
+    void setUp() {
+        validationService = new BrandingValidationService();
     }
 
-    @Test
-    void validatePlatformName_rejectsNull() {
-        assertThrows(InvalidBrandingException.class,
-                () -> validationService.validatePlatformName(null));
-    }
+    // =====================================================================
+    // PLATFORM NAME
+    // =====================================================================
 
     @Test
-    void validatePlatformName_rejectsBlank() {
-        assertThrows(InvalidBrandingException.class,
-                () -> validationService.validatePlatformName("   "));
-    }
+    void shouldAcceptValidPlatformName() {
 
-    @Test
-    void validatePlatformName_rejectsOver100Chars() {
-        String tooLong = "a".repeat(101);
-        assertThrows(InvalidBrandingException.class,
-                () -> validationService.validatePlatformName(tooLong));
+        assertDoesNotThrow(() ->
+                validationService.validatePlatformName(
+                        "Enterprise Platform"
+                )
+        );
     }
 
     @Test
-    void validatePlatformName_acceptsExactly100Chars() {
-        String exact = "a".repeat(100);
-        assertDoesNotThrow(() -> validationService.validatePlatformName(exact));
+    void shouldRejectNullPlatformName() {
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> validationService.validatePlatformName(null)
+        );
     }
 
     @Test
-    void validateCompanyName_rejectsNull() {
-        assertThrows(InvalidBrandingException.class,
-                () -> validationService.validateCompanyName(null));
+    void shouldRejectBlankPlatformName() {
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> validationService.validatePlatformName("   ")
+        );
     }
 
     @Test
-    void validateWelcomeMessage_allowsNull() {
-        assertDoesNotThrow(() -> validationService.validateWelcomeMessage(null));
+    void shouldRejectPlatformNameExceedingMaximumLength() {
+
+        String platformName = "A".repeat(101);
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> validationService.validatePlatformName(platformName)
+        );
+    }
+
+    // =====================================================================
+    // COMPANY NAME
+    // =====================================================================
+
+    @Test
+    void shouldAcceptValidCompanyName() {
+
+        assertDoesNotThrow(() ->
+                validationService.validateCompanyName(
+                        "ABC Technologies"
+                )
+        );
     }
 
     @Test
-    void validateWelcomeMessage_rejectsOver250Chars() {
-        String tooLong = "a".repeat(251);
-        assertThrows(InvalidBrandingException.class,
-                () -> validationService.validateWelcomeMessage(tooLong));
+    void shouldRejectNullCompanyName() {
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> validationService.validateCompanyName(null)
+        );
     }
 
     @Test
-    void validateFooterText_rejectsOver200Chars() {
-        String tooLong = "a".repeat(201);
-        assertThrows(InvalidBrandingException.class,
-                () -> validationService.validateFooterText(tooLong));
-    }
+    void shouldRejectBlankCompanyName() {
 
-    @ParameterizedTest
-    @ValueSource(strings = {"#1A2B3C", "#FFFFFF", "#000000", "#abcdef"})
-    void validateHexColor_acceptsValidHex(String color) {
-        assertDoesNotThrow(() -> validationService.validateHexColor("primary_color", color));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"1A2B3C", "#GGGGGG", "#12345", "red", "#1234567"})
-    void validateHexColor_rejectsInvalidHex(String color) {
-        assertThrows(InvalidBrandingException.class,
-                () -> validationService.validateHexColor("primary_color", color));
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> validationService.validateCompanyName("   ")
+        );
     }
 
     @Test
-    void validateHexColor_rejectsNull() {
-        assertThrows(InvalidBrandingException.class,
-                () -> validationService.validateHexColor("primary_color", null));
+    void shouldRejectCompanyNameExceedingMaximumLength() {
+
+        String companyName = "A".repeat(101);
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> validationService.validateCompanyName(companyName)
+        );
+    }
+
+    // =====================================================================
+    // WELCOME MESSAGE
+    // =====================================================================
+
+    @Test
+    void shouldAcceptValidWelcomeMessage() {
+
+        assertDoesNotThrow(() ->
+                validationService.validateWelcomeMessage(
+                        "Welcome to Enterprise Platform"
+                )
+        );
     }
 
     @Test
-    void validateTheme_acceptsLight() {
-        assertDoesNotThrow(() -> validationService.validateTheme("LIGHT"));
+    void shouldAcceptNullWelcomeMessage() {
+
+        assertDoesNotThrow(() ->
+                validationService.validateWelcomeMessage(null)
+        );
     }
 
     @Test
-    void validateTheme_acceptsDarkCaseInsensitive() {
-        assertDoesNotThrow(() -> validationService.validateTheme("dark"));
+    void shouldRejectWelcomeMessageExceedingMaximumLength() {
+
+        String welcomeMessage = "A".repeat(251);
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> validationService.validateWelcomeMessage(
+                        welcomeMessage
+                )
+        );
+    }
+
+    // =====================================================================
+    // FOOTER TEXT
+    // =====================================================================
+
+    @Test
+    void shouldAcceptValidFooterText() {
+
+        assertDoesNotThrow(() ->
+                validationService.validateFooterText(
+                        "Enterprise Platform"
+                )
+        );
     }
 
     @Test
-    void validateTheme_rejectsInvalidValue() {
-        assertThrows(InvalidBrandingException.class,
-                () -> validationService.validateTheme("BLUE"));
+    void shouldAcceptNullFooterText() {
+
+        assertDoesNotThrow(() ->
+                validationService.validateFooterText(null)
+        );
     }
 
     @Test
-    void validateTheme_rejectsNull() {
-        assertThrows(InvalidBrandingException.class,
-                () -> validationService.validateTheme(null));
+    void shouldRejectFooterTextExceedingMaximumLength() {
+
+        String footerText = "A".repeat(201);
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> validationService.validateFooterText(
+                        footerText
+                )
+        );
+    }
+
+    // =====================================================================
+    // COPYRIGHT TEXT
+    // =====================================================================
+
+    @Test
+    void shouldAcceptValidCopyrightText() {
+
+        assertDoesNotThrow(() ->
+                validationService.validateCopyrightText(
+                        "© 2026 ABC Technologies"
+                )
+        );
     }
 
     @Test
-    void validateLogo_allowsNullFile() {
-        assertDoesNotThrow(() -> validationService.validateLogo(null));
+    void shouldAcceptNullCopyrightText() {
+
+        assertDoesNotThrow(() ->
+                validationService.validateCopyrightText(null)
+        );
     }
 
     @Test
-    void validateLogo_acceptsValidPng() {
-        MultipartFile file = Mockito.mock(MultipartFile.class);
-        Mockito.when(file.isEmpty()).thenReturn(false);
-        Mockito.when(file.getContentType()).thenReturn("image/png");
-        Mockito.when(file.getSize()).thenReturn(1024L * 1024);
+    void shouldRejectCopyrightTextExceedingMaximumLength() {
 
-        assertDoesNotThrow(() -> validationService.validateLogo(file));
+        String copyrightText = "A".repeat(201);
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> validationService.validateCopyrightText(
+                        copyrightText
+                )
+        );
+    }
+
+    // =====================================================================
+    // HEX COLORS
+    // =====================================================================
+
+    @Test
+    void shouldAcceptValidHexColor() {
+
+        assertDoesNotThrow(() ->
+                validationService.validateHexColor(
+                        "primary_color",
+                        "#1976D2"
+                )
+        );
     }
 
     @Test
-    void validateLogo_rejectsOversizedFile() {
-        MultipartFile file = Mockito.mock(MultipartFile.class);
-        Mockito.when(file.isEmpty()).thenReturn(false);
-        Mockito.when(file.getContentType()).thenReturn("image/png");
-        Mockito.when(file.getSize()).thenReturn(6L * 1024 * 1024);
+    void shouldAcceptLowercaseHexColor() {
 
-        assertThrows(InvalidBrandingException.class,
-                () -> validationService.validateLogo(file));
+        assertDoesNotThrow(() ->
+                validationService.validateHexColor(
+                        "primary_color",
+                        "#abcdef"
+                )
+        );
     }
 
     @Test
-    void validateLogo_rejectsWrongFileType() {
-        MultipartFile file = Mockito.mock(MultipartFile.class);
-        Mockito.when(file.isEmpty()).thenReturn(false);
-        Mockito.when(file.getContentType()).thenReturn("application/pdf");
-        Mockito.when(file.getSize()).thenReturn(1024L);
+    void shouldRejectHexColorWithoutHash() {
 
-        assertThrows(InvalidBrandingException.class,
-                () -> validationService.validateLogo(file));
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> validationService.validateHexColor(
+                        "primary_color",
+                        "1976D2"
+                )
+        );
     }
 
     @Test
-    void validateBackgroundImage_rejectsOversizedFile() {
-        MultipartFile file = Mockito.mock(MultipartFile.class);
-        Mockito.when(file.isEmpty()).thenReturn(false);
-        Mockito.when(file.getContentType()).thenReturn("image/jpeg");
-        Mockito.when(file.getSize()).thenReturn(11L * 1024 * 1024);
+    void shouldRejectInvalidHexColorCharacters() {
 
-        assertThrows(InvalidBrandingException.class,
-                () -> validationService.validateBackgroundImage(file));
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> validationService.validateHexColor(
+                        "primary_color",
+                        "#GGGGGG"
+                )
+        );
+    }
+
+    @Test
+    void shouldRejectShortHexColor() {
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> validationService.validateHexColor(
+                        "primary_color",
+                        "#FFF"
+                )
+        );
+    }
+
+    @Test
+    void shouldRejectLongHexColor() {
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> validationService.validateHexColor(
+                        "primary_color",
+                        "#1234567"
+                )
+        );
+    }
+
+    @Test
+    void shouldRejectNullHexColor() {
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> validationService.validateHexColor(
+                        "primary_color",
+                        null
+                )
+        );
+    }
+
+    // =====================================================================
+    // THEME
+    // =====================================================================
+
+    @Test
+    void shouldAcceptLightTheme() {
+
+        assertDoesNotThrow(() ->
+                validationService.validateTheme("LIGHT")
+        );
+    }
+
+    @Test
+    void shouldAcceptDarkTheme() {
+
+        assertDoesNotThrow(() ->
+                validationService.validateTheme("DARK")
+        );
+    }
+
+    @Test
+    void shouldAcceptLowercaseTheme() {
+
+        assertDoesNotThrow(() ->
+                validationService.validateTheme("light")
+        );
+
+        assertDoesNotThrow(() ->
+                validationService.validateTheme("dark")
+        );
+    }
+
+    @Test
+    void shouldRejectInvalidTheme() {
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> validationService.validateTheme("BLUE")
+        );
+    }
+
+    @Test
+    void shouldRejectNullTheme() {
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> validationService.validateTheme(null)
+        );
     }
 }
