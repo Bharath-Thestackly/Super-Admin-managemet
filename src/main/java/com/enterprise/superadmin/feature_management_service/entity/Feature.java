@@ -7,6 +7,9 @@ import java.time.LocalDateTime;
 
 import java.util.UUID;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 @Entity
 @Data
 @Table(
@@ -53,6 +56,8 @@ public class Feature {
             length = 20
     )
     private String status = "DISABLED";
+
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(
             name = "configuration",
             columnDefinition = "jsonb"

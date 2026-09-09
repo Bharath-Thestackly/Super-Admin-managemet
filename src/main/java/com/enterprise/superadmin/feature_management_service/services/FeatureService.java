@@ -48,10 +48,12 @@ public class FeatureService {
         validateConfiguration(request.getConfiguration());
         feature.setConfiguration(request.getConfiguration());
 
-        if (request.getCreatedBy() != null) {
-            feature.setCreatedBy(
-                    UUID.fromString(request.getCreatedBy())
-            );
+        if (request.getCreatedBy() != null && !request.getCreatedBy().trim().isEmpty()) {
+            try {
+                feature.setCreatedBy(UUID.fromString(request.getCreatedBy()));
+            } catch (IllegalArgumentException e) {
+                feature.setCreatedBy(UUID.fromString("00000000-0000-0000-0000-000000000001"));
+            }
         }
 
         Feature savedFeature = featureRepository.save(feature);
@@ -121,10 +123,12 @@ public class FeatureService {
             feature.setConfiguration(request.getConfiguration());
         }
 
-        if (request.getUpdatedBy() != null) {
-            feature.setUpdatedBy(
-                    UUID.fromString(request.getUpdatedBy())
-            );
+        if (request.getUpdatedBy() != null && !request.getUpdatedBy().trim().isEmpty()) {
+            try {
+                feature.setUpdatedBy(UUID.fromString(request.getUpdatedBy()));
+            } catch (IllegalArgumentException e) {
+                feature.setUpdatedBy(userId != null ? userId : UUID.fromString("00000000-0000-0000-0000-000000000001"));
+            }
         }
 
         Feature updatedFeature = featureRepository.save(feature);

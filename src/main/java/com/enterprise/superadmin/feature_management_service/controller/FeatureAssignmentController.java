@@ -16,26 +16,19 @@ import java.util.UUID;
 @RequestMapping("/api/v1/features")
 public class FeatureAssignmentController {
 
-    private final FeatureAssignmentService
-            featureAssignmentService;
+    private static final UUID DEFAULT_USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private final FeatureAssignmentService featureAssignmentService;
 
-    public FeatureAssignmentController(
-            FeatureAssignmentService featureAssignmentService) {
-
-        this.featureAssignmentService =
-                featureAssignmentService;
+    public FeatureAssignmentController(FeatureAssignmentService featureAssignmentService) {
+        this.featureAssignmentService = featureAssignmentService;
     }
 
     @PostMapping("/assign")
-    public ResponseEntity<FeatureAssignmentResponse>
-    assignFeature(
-            @Valid
-            @RequestBody
-            FeatureAssignmentRequest request,
+    public ResponseEntity<FeatureAssignmentResponse> assignFeature(
+            @Valid @RequestBody FeatureAssignmentRequest request,
             Authentication authentication) {
 
-        UUID userId =
-                getUserId(authentication);
+        UUID userId = getUserId(authentication);
 
         if (request.getCreatedBy() == null) {
             request.setCreatedBy(userId);
@@ -43,38 +36,24 @@ public class FeatureAssignmentController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(
-                        featureAssignmentService.assignFeature(
-                                request
-                        )
-                );
+                .body(featureAssignmentService.assignFeature(request));
     }
 
     @GetMapping("/tenant/{tenantId}")
-    public ResponseEntity<
-            List<FeatureAssignmentResponse>>
-    getTenantFeatures(
+    public ResponseEntity<List<FeatureAssignmentResponse>> getTenantFeatures(
             @PathVariable UUID tenantId) {
 
-        return ResponseEntity.ok(
-                featureAssignmentService
-                        .getByTenant(tenantId)
-        );
+        return ResponseEntity.ok(featureAssignmentService.getByTenant(tenantId));
     }
 
-    private UUID getUserId(
-            Authentication authentication) {
-
-        if (authentication == null ||
-                authentication.getName() == null) {
-
-            throw new IllegalStateException(
-                    "Authenticated user is required"
-            );
+    private UUID getUserId(Authentication authentication) {
+        if (authentication == null || authentication.getName() == null) {
+            return DEFAULT_USER_ID;
         }
-
-        return UUID.fromString(
-                authentication.getName()
-        );
+        try {
+            return UUID.fromString(authentication.getName());
+        } catch (IllegalArgumentException e) {
+            return DEFAULT_USER_ID;
+        }
     }
 }

@@ -2,6 +2,8 @@ package com.enterprise.superadmin.feature_management_service.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 
@@ -133,6 +135,7 @@ public class FeatureAssignment {
 
     private String status = "ENABLED";
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(
 
             name = "configuration",
