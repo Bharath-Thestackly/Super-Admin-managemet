@@ -18,13 +18,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final CommonJwtAuthenticationFilter jwtAuthenticationFilter;
-    private final JwtAuthenticationEntryPoint unauthorizedHandler;
 
     public SecurityConfig(
-            CommonJwtAuthenticationFilter jwtAuthenticationFilter,
-            JwtAuthenticationEntryPoint unauthorizedHandler) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.unauthorizedHandler = unauthorizedHandler;
     }
 
     @Bean
@@ -32,23 +28,15 @@ public class SecurityConfig {
 
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .exceptionHandling(exception ->
-                        exception.authenticationEntryPoint(unauthorizedHandler)
                 )
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/error"
                         ).permitAll()
                         .anyRequest().authenticated()
-                );
 
-        http.addFilterBefore(
                 jwtAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter.class
         );
