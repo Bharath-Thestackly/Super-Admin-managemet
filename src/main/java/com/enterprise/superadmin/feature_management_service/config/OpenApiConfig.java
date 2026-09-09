@@ -1,11 +1,12 @@
 package com.enterprise.superadmin.feature_management_service.config;
 
-import org.springframework.boot.actuate.info.Info;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class OpenApiConfig  {
+public class OpenApiConfig {
 
     @Bean
     public OpenAPI featureManagementOpenAPI() {

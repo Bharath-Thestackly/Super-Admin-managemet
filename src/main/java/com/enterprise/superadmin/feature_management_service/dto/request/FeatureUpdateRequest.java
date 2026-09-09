@@ -24,12 +24,4 @@ public class FeatureUpdateRequest {
 
     private String updatedBy;
 
-    // Constructors
-
-    public FeatureUpdateRequest() {
-
-    }
-
-
-
 }

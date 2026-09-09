@@ -2,6 +2,7 @@ package com.enterprise.superadmin.feature_management_service.controller;
 
 
 import com.enterprise.superadmin.feature_management_service.dto.request.FeatureCreateRequest;
+import com.enterprise.superadmin.feature_management_service.dto.request.FeatureUpdateRequest;
 import com.enterprise.superadmin.feature_management_service.dto.response.FeatureResponse;
 import com.enterprise.superadmin.feature_management_service.services.FeatureService;
 import jakarta.validation.Valid;
@@ -36,12 +37,15 @@ public class FeatureController {
         UUID userId =
                 getUserId(authentication);
 
+        if (request.getCreatedBy() == null) {
+            request.setCreatedBy(userId.toString());
+        }
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(
                         featureService.createFeature(
-                                request,
-                                userId
+                                request
                         )
                 );
     }
@@ -67,11 +71,14 @@ public class FeatureController {
         UUID userId =
                 getUserId(authentication);
 
+        if (request.getUpdatedBy() == null) {
+            request.setUpdatedBy(userId.toString());
+        }
+
         return ResponseEntity.ok(
                 featureService.updateFeature(
                         id,
-                        request,
-                        userId
+                        request
                 )
         );
     }
@@ -82,13 +89,9 @@ public class FeatureController {
             @PathVariable UUID id,
             Authentication authentication) {
 
-        UUID userId =
-                getUserId(authentication);
-
         return ResponseEntity.ok(
-                featureService.activateFeature(
-                        id,
-                        userId
+                featureService.enableFeature(
+                        id
                 )
         );
     }
@@ -99,13 +102,9 @@ public class FeatureController {
             @PathVariable UUID id,
             Authentication authentication) {
 
-        UUID userId =
-                getUserId(authentication);
-
         return ResponseEntity.ok(
-                featureService.deactivateFeature(
-                        id,
-                        userId
+                featureService.disableFeature(
+                        id
                 )
         );
     }

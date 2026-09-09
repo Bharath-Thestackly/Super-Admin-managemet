@@ -34,12 +34,5 @@ public class FeatureAssignmentResponse {
 
     private UUID updatedBy;
 
-    // Constructors
-
-    public FeatureAssignmentResponse() {
-
-    }
-
-
 
 }

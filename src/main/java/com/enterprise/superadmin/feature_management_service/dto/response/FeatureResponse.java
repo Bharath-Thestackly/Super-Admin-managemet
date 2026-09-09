@@ -28,10 +28,4 @@ public class FeatureResponse {
 
     private UUID updatedBy;
 
-    // Constructors
-
-    public FeatureResponse() {
-
-    }
-
 }

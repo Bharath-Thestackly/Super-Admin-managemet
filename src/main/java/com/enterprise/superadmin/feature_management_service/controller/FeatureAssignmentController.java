@@ -37,12 +37,15 @@ public class FeatureAssignmentController {
         UUID userId =
                 getUserId(authentication);
 
+        if (request.getCreatedBy() == null) {
+            request.setCreatedBy(userId);
+        }
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(
                         featureAssignmentService.assignFeature(
-                                request,
-                                userId
+                                request
                         )
                 );
     }
@@ -55,7 +58,7 @@ public class FeatureAssignmentController {
 
         return ResponseEntity.ok(
                 featureAssignmentService
-                        .getFeaturesByTenant(tenantId)
+                        .getByTenant(tenantId)
         );
     }
 

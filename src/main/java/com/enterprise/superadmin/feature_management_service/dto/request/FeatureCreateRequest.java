@@ -36,11 +36,4 @@ public class FeatureCreateRequest {
 
     private String createdBy;
 
-    // Constructors
-
-    public FeatureCreateRequest() {
-
-    }
-
-
 }

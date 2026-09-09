@@ -25,11 +25,4 @@ public class FeatureAssignmentRequest {
 
     private UUID createdBy;
 
-    // Constructors
-
-    public FeatureAssignmentRequest() {
-
-    }
-
-
 }
