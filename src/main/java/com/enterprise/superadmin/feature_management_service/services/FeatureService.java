@@ -1,6 +1,5 @@
 package com.enterprise.superadmin.feature_management_service.services;
 
-
 import com.enterprise.superadmin.feature_management_service.dto.request.FeatureCreateRequest;
 import com.enterprise.superadmin.feature_management_service.dto.request.FeatureUpdateRequest;
 import com.enterprise.superadmin.feature_management_service.dto.response.FeatureResponse;
@@ -9,6 +8,8 @@ import com.enterprise.superadmin.feature_management_service.exception.FeatureCon
 import com.enterprise.superadmin.feature_management_service.exception.FeatureNotFoundException;
 import com.enterprise.superadmin.feature_management_service.exception.InvalidFeatureStateException;
 import com.enterprise.superadmin.feature_management_service.repository.FeatureRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class FeatureService {
 
+    private static final Logger log = LoggerFactory.getLogger(FeatureService.class);
     private final FeatureRepository featureRepository;
 
     public FeatureService(FeatureRepository featureRepository) {
@@ -29,8 +31,10 @@ public class FeatureService {
     // CREATE
 
     public FeatureResponse createFeature(FeatureCreateRequest request) {
+        log.info("Creating new feature with name: {}", request.getFeatureName());
 
         if (featureRepository.existsByFeatureName(request.getFeatureName())) {
+            log.warn("Feature creation failed. Feature already exists: {}", request.getFeatureName());
             throw new InvalidFeatureStateException(
                     "Feature already exists: " + request.getFeatureName()
             );
@@ -57,6 +61,7 @@ public class FeatureService {
         }
 
         Feature savedFeature = featureRepository.save(feature);
+        log.info("Feature created successfully with id: {}", savedFeature.getId());
 
         return mapToResponse(savedFeature);
     }
@@ -65,7 +70,7 @@ public class FeatureService {
 
     @Transactional(readOnly = true)
     public List<FeatureResponse> getAllFeatures() {
-
+        log.info("Retrieving all features");
         return featureRepository.findAll()
                 .stream()
                 .map(this::mapToResponse)
@@ -76,13 +81,14 @@ public class FeatureService {
 
     @Transactional(readOnly = true)
     public FeatureResponse getFeatureById(UUID id) {
-
+        log.info("Retrieving feature by id: {}", id);
         Feature feature = featureRepository.findById(id)
-                .orElseThrow(() ->
-                        new FeatureNotFoundException(
-                                "Feature not found with id: " + id
-                        )
-                );
+                .orElseThrow(() -> {
+                    log.warn("Feature not found with id: {}", id);
+                    return new FeatureNotFoundException(
+                            "Feature not found with id: " + id
+                    );
+                });
 
         return mapToResponse(feature);
     }
@@ -94,12 +100,14 @@ public class FeatureService {
             FeatureUpdateRequest request,
             UUID userId) {
 
+        log.info("Updating feature with id: {}", id);
         Feature feature = featureRepository.findById(id)
-                .orElseThrow(() ->
-                        new FeatureNotFoundException(
-                                "Feature not found with id: " + id
-                        )
-                );
+                .orElseThrow(() -> {
+                    log.warn("Update failed. Feature not found with id: {}", id);
+                    return new FeatureNotFoundException(
+                            "Feature not found with id: " + id
+                    );
+                });
 
         if (request.getFeatureName() != null) {
             feature.setFeatureName(request.getFeatureName());
@@ -132,6 +140,7 @@ public class FeatureService {
         }
 
         Feature updatedFeature = featureRepository.save(feature);
+        log.info("Feature updated successfully for id: {}", updatedFeature.getId());
 
         return mapToResponse(updatedFeature);
     }
@@ -139,48 +148,51 @@ public class FeatureService {
     // ENABLE
 
     public FeatureResponse enableFeature(UUID id) {
-
+        log.info("Enabling feature with id: {}", id);
         Feature feature = getFeatureEntity(id);
 
         if ("ENABLED".equals(feature.getStatus())) {
+            log.warn("Feature with id: {} is already enabled", id);
             throw new InvalidFeatureStateException(
                     "Feature is already enabled"
             );
         }
 
         feature.setStatus("ENABLED");
+        Feature saved = featureRepository.save(feature);
+        log.info("Feature enabled successfully for id: {}", id);
 
-        return mapToResponse(
-                featureRepository.save(feature)
-        );
+        return mapToResponse(saved);
     }
 
     // DISABLE
 
     public FeatureResponse disableFeature(UUID id) {
-
+        log.info("Disabling feature with id: {}", id);
         Feature feature = getFeatureEntity(id);
 
         if ("DISABLED".equals(feature.getStatus())) {
+            log.warn("Feature with id: {} is already disabled", id);
             throw new InvalidFeatureStateException(
                     "Feature is already disabled"
             );
         }
 
         feature.setStatus("DISABLED");
+        Feature saved = featureRepository.save(feature);
+        log.info("Feature disabled successfully for id: {}", id);
 
-        return mapToResponse(
-                featureRepository.save(feature)
-        );
+        return mapToResponse(saved);
     }
 
     // DELETE
 
     public void deleteFeature(UUID id) {
-
+        log.info("Deleting feature with id: {}", id);
         Feature feature = getFeatureEntity(id);
 
         featureRepository.delete(feature);
+        log.info("Feature deleted successfully for id: {}", id);
     }
 
     // FIND ENTITY
@@ -188,11 +200,12 @@ public class FeatureService {
     private Feature getFeatureEntity(UUID id) {
 
         return featureRepository.findById(id)
-                .orElseThrow(() ->
-                        new FeatureNotFoundException(
-                                "Feature not found with id: " + id
-                        )
-                );
+                .orElseThrow(() -> {
+                    log.warn("Feature entity not found with id: {}", id);
+                    return new FeatureNotFoundException(
+                            "Feature not found with id: " + id
+                    );
+                });
     }
 
     // STATUS VALIDATION
@@ -245,4 +258,4 @@ public class FeatureService {
 
         return response;
     }
-}
+}

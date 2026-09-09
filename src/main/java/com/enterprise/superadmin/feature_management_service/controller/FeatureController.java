@@ -5,6 +5,8 @@ import com.enterprise.superadmin.feature_management_service.dto.request.FeatureU
 import com.enterprise.superadmin.feature_management_service.dto.response.FeatureResponse;
 import com.enterprise.superadmin.feature_management_service.services.FeatureService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -17,6 +19,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/features")
 public class FeatureController {
 
+    private static final Logger log = LoggerFactory.getLogger(FeatureController.class);
     private static final UUID DEFAULT_USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
     private final FeatureService featureService;
 
@@ -30,6 +33,7 @@ public class FeatureController {
             Authentication authentication) {
 
         UUID userId = getUserId(authentication);
+        log.info("REST request to create feature: {} by user: {}", request.getFeatureName(), userId);
 
         if (request.getCreatedBy() == null || request.getCreatedBy().trim().isEmpty()) {
             request.setCreatedBy(userId.toString());
@@ -42,6 +46,7 @@ public class FeatureController {
 
     @GetMapping
     public ResponseEntity<List<FeatureResponse>> getAllFeatures() {
+        log.info("REST request to get all features");
         return ResponseEntity.ok(featureService.getAllFeatures());
     }
 
@@ -52,6 +57,7 @@ public class FeatureController {
             Authentication authentication) {
 
         UUID userId = getUserId(authentication);
+        log.info("REST request to update feature id: {} by user: {}", id, userId);
 
         if (request.getUpdatedBy() == null || request.getUpdatedBy().trim().isEmpty()) {
             request.setUpdatedBy(userId.toString());
@@ -65,6 +71,7 @@ public class FeatureController {
             @PathVariable UUID id,
             Authentication authentication) {
 
+        log.info("REST request to activate feature id: {}", id);
         return ResponseEntity.ok(featureService.enableFeature(id));
     }
 
@@ -73,6 +80,7 @@ public class FeatureController {
             @PathVariable UUID id,
             Authentication authentication) {
 
+        log.info("REST request to deactivate feature id: {}", id);
         return ResponseEntity.ok(featureService.disableFeature(id));
     }
 
@@ -87,3 +95,4 @@ public class FeatureController {
         }
     }
 }
+

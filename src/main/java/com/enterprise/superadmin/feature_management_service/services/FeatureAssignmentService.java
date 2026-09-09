@@ -9,6 +9,8 @@ import com.enterprise.superadmin.feature_management_service.exception.FeatureNot
 import com.enterprise.superadmin.feature_management_service.exception.InvalidFeatureStateException;
 import com.enterprise.superadmin.feature_management_service.repository.FeatureAssignmentRepository;
 import com.enterprise.superadmin.feature_management_service.repository.FeatureRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class FeatureAssignmentService {
 
+    private static final Logger log = LoggerFactory.getLogger(FeatureAssignmentService.class);
     private final FeatureAssignmentRepository assignmentRepository;
     private final FeatureRepository featureRepository;
 
@@ -37,19 +40,22 @@ public class FeatureAssignmentService {
     public FeatureAssignmentResponse assignFeature(
             FeatureAssignmentRequest request) {
 
+        log.info("Assigning featureId: {} to tenantId: {}", request.getFeatureId(), request.getTenantId());
+
         Feature feature = featureRepository
                 .findById(request.getFeatureId())
-                .orElseThrow(() ->
-                        new FeatureNotFoundException(
-                                "Feature not found with id: "
-                                        + request.getFeatureId()
-                        )
-                );
+                .orElseThrow(() -> {
+                    log.warn("Feature not found with id: {}", request.getFeatureId());
+                    return new FeatureNotFoundException(
+                            "Feature not found with id: " + request.getFeatureId()
+                    );
+                });
 
         if (assignmentRepository.existsByFeatureIdAndTenantId(
                 request.getFeatureId(),
                 request.getTenantId())) {
 
+            log.warn("Feature id: {} already assigned to tenant id: {}", request.getFeatureId(), request.getTenantId());
             throw new InvalidFeatureStateException(
                     "Feature is already assigned to this tenant"
             );
@@ -59,34 +65,23 @@ public class FeatureAssignmentService {
 
         validateConfiguration(request.getConfiguration());
 
-        FeatureAssignment assignment =
-                new FeatureAssignment();
+        FeatureAssignment assignment = new FeatureAssignment();
 
         assignment.setFeature(feature);
         assignment.setTenantId(request.getTenantId());
-        assignment.setOrganizationId(
-                request.getOrganizationId()
-        );
-        assignment.setLicensePlan(
-                request.getLicensePlan()
-        );
+        assignment.setOrganizationId(request.getOrganizationId());
+        assignment.setLicensePlan(request.getLicensePlan());
 
         if (request.getStatus() != null) {
             assignment.setStatus(request.getStatus());
         }
 
-        assignment.setConfiguration(
-                request.getConfiguration()
-        );
-
+        assignment.setConfiguration(request.getConfiguration());
         assignment.setAssignedAt(LocalDateTime.now());
+        assignment.setCreatedBy(request.getCreatedBy());
 
-        assignment.setCreatedBy(
-                request.getCreatedBy()
-        );
-
-        FeatureAssignment saved =
-                assignmentRepository.save(assignment);
+        FeatureAssignment saved = assignmentRepository.save(assignment);
+        log.info("Feature assignment created successfully with id: {}", saved.getId());
 
         return mapToResponse(saved);
     }
@@ -95,7 +90,7 @@ public class FeatureAssignmentService {
 
     @Transactional(readOnly = true)
     public List<FeatureAssignmentResponse> getAllAssignments() {
-
+        log.info("Retrieving all feature assignments");
         return assignmentRepository.findAll()
                 .stream()
                 .map(this::mapToResponse)
@@ -106,9 +101,8 @@ public class FeatureAssignmentService {
 
     @Transactional(readOnly = true)
     public FeatureAssignmentResponse getAssignmentById(UUID id) {
-
-        FeatureAssignment assignment =
-                getAssignmentEntity(id);
+        log.info("Retrieving assignment by id: {}", id);
+        FeatureAssignment assignment = getAssignmentEntity(id);
 
         return mapToResponse(assignment);
     }
@@ -118,7 +112,7 @@ public class FeatureAssignmentService {
     @Transactional(readOnly = true)
     public List<FeatureAssignmentResponse> getByFeature(
             UUID featureId) {
-
+        log.info("Retrieving assignments for featureId: {}", featureId);
         return assignmentRepository
                 .findByFeatureId(featureId)
                 .stream()
@@ -131,7 +125,7 @@ public class FeatureAssignmentService {
     @Transactional(readOnly = true)
     public List<FeatureAssignmentResponse> getByTenant(
             UUID tenantId) {
-
+        log.info("Retrieving assignments for tenantId: {}", tenantId);
         return assignmentRepository
                 .findByTenantId(tenantId)
                 .stream()
@@ -142,35 +136,33 @@ public class FeatureAssignmentService {
     // DISABLE ASSIGNMENT
 
     public FeatureAssignmentResponse disableAssignment(UUID id) {
-
-        FeatureAssignment assignment =
-                getAssignmentEntity(id);
+        log.info("Disabling assignment with id: {}", id);
+        FeatureAssignment assignment = getAssignmentEntity(id);
 
         if ("DISABLED".equals(assignment.getStatus())) {
-
+            log.warn("Assignment id: {} is already disabled", id);
             throw new InvalidFeatureStateException(
                     "Feature assignment is already disabled"
             );
         }
 
         assignment.setStatus("DISABLED");
-        assignment.setUnassignedAt(
-                LocalDateTime.now()
-        );
+        assignment.setUnassignedAt(LocalDateTime.now());
 
-        return mapToResponse(
-                assignmentRepository.save(assignment)
-        );
+        FeatureAssignment saved = assignmentRepository.save(assignment);
+        log.info("Assignment disabled successfully for id: {}", id);
+
+        return mapToResponse(saved);
     }
 
     // DELETE / UNASSIGN
 
     public void unassignFeature(UUID id) {
-
-        FeatureAssignment assignment =
-                getAssignmentEntity(id);
+        log.info("Unassigning feature assignment with id: {}", id);
+        FeatureAssignment assignment = getAssignmentEntity(id);
 
         assignmentRepository.delete(assignment);
+        log.info("Feature assignment unassigned/deleted successfully for id: {}", id);
     }
 
     // FIND ENTITY
@@ -178,12 +170,12 @@ public class FeatureAssignmentService {
     private FeatureAssignment getAssignmentEntity(UUID id) {
 
         return assignmentRepository.findById(id)
-                .orElseThrow(() ->
-                        new FeatureNotFoundException(
-                                "Feature assignment not found with id: "
-                                        + id
-                        )
-                );
+                .orElseThrow(() -> {
+                    log.warn("Feature assignment entity not found with id: {}", id);
+                    return new FeatureNotFoundException(
+                            "Feature assignment not found with id: " + id
+                    );
+                });
     }
 
     // STATUS VALIDATION
@@ -283,4 +275,4 @@ public class FeatureAssignmentService {
 
         return response;
     }
-}
+}
