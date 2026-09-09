@@ -89,7 +89,8 @@ public class FeatureService {
 
     public FeatureResponse updateFeature(
             UUID id,
-            FeatureUpdateRequest request) {
+            FeatureUpdateRequest request,
+            UUID userId) {
 
         Feature feature = featureRepository.findById(id)
                 .orElseThrow(() ->
