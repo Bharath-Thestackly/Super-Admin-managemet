@@ -1,4 +1,12 @@
 package com.enterprise.superadmin.platform_branding_service.exception;
 
-public class BrandingAlreadyExistsException {
+/**
+ * Raised when platform branding already exists and a create/initialize
+ * operation cannot be performed again.
+ */
+public class BrandingAlreadyExistsException extends RuntimeException {
+
+    public BrandingAlreadyExistsException(String message) {
+        super(message);
+    }
 }
