@@ -1,4 +1,4 @@
-package servicetest;
+package com.enterprise.superadmin.platform_branding_service;
 
 
 import com.enterprise.superadmin.platform_branding_service.service.BrandingValidationService;
