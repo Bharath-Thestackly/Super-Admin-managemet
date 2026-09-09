@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SuperAdminApplication {
+public class PlatformAdminServiceApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(SuperAdminApplication.class, args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(PlatformAdminServiceApplication.class, args);
+	}
 
 }
