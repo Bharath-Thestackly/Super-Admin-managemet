@@ -1,114 +1,146 @@
 package com.enterprise.superadmin.platform_branding_service.service;
 
-import com.enterprise.superadmin.platform_branding_service.exception.InvalidBrandingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.util.StringUtils;
 
-import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
+/**
+ * Centralized business validation for Platform Branding.
+ *
+ * Responsibilities:
+ * - Validate branding business rules that are shared across create/update flows.
+ * - Keep validation logic out of controller/service orchestration.
+ * - Provide consistent validation messages.
+ *
+ * Note:
+ * File extension/MIME/size validation belongs to the asset/storage layer,
+ * not this class.
+ */
 @Service
 public class BrandingValidationService {
 
-    private static final int PLATFORM_NAME_MAX = 100;
-    private static final int COMPANY_NAME_MAX = 100;
-    private static final int WELCOME_MESSAGE_MAX = 250;
-    private static final int FOOTER_TEXT_MAX = 200;
+    private static final Logger log = LoggerFactory.getLogger(BrandingValidationService.class);
 
-    private static final long LOGO_MAX_BYTES = 5L * 1024 * 1024;
-    private static final long BACKGROUND_MAX_BYTES = 10L * 1024 * 1024;
+    private static final int MAX_PLATFORM_NAME_LENGTH = 100;
+    private static final int MAX_COMPANY_NAME_LENGTH = 100;
+    private static final int MAX_WELCOME_MESSAGE_LENGTH = 250;
+    private static final int MAX_FOOTER_TEXT_LENGTH = 200;
+    private static final int MAX_COPYRIGHT_TEXT_LENGTH = 200;
 
-    private static final List<String> LOGO_ALLOWED_TYPES =
-            List.of("image/png", "image/jpeg", "image/jpg", "image/svg+xml");
-    private static final List<String> BACKGROUND_ALLOWED_TYPES =
-            List.of("image/png", "image/jpeg", "image/jpg");
+    private static final Pattern HEX_COLOR_PATTERN = Pattern.compile("^#[A-Fa-f0-9]{6}$");
 
-    private static final Pattern HEX_COLOR_PATTERN =
-            Pattern.compile("^#[A-Fa-f0-9]{6}$");
-
-    private static final List<String> ALLOWED_THEMES = List.of("LIGHT", "DARK");
+    /**
+     * Allowed theme values based on the Platform Branding requirement.
+     */
+    private static final String LIGHT_THEME = "LIGHT";
+    private static final String DARK_THEME = "DARK";
 
     public void validatePlatformName(String platformName) {
-        if (platformName == null || platformName.isBlank()) {
-            throw new InvalidBrandingException("platform_name is required");
-        }
-        if (platformName.length() > PLATFORM_NAME_MAX) {
-            throw new InvalidBrandingException(
-                    "platform_name must not exceed " + PLATFORM_NAME_MAX + " characters");
-        }
+        validateRequiredText(platformName, "platform_name", MAX_PLATFORM_NAME_LENGTH);
     }
 
     public void validateCompanyName(String companyName) {
-        if (companyName == null || companyName.isBlank()) {
-            throw new InvalidBrandingException("company_name is required");
-        }
-        if (companyName.length() > COMPANY_NAME_MAX) {
-            throw new InvalidBrandingException(
-                    "company_name must not exceed " + COMPANY_NAME_MAX + " characters");
-        }
+        validateRequiredText(companyName, "company_name", MAX_COMPANY_NAME_LENGTH);
     }
 
     public void validateWelcomeMessage(String welcomeMessage) {
-        if (welcomeMessage != null && welcomeMessage.length() > WELCOME_MESSAGE_MAX) {
-            throw new InvalidBrandingException(
-                    "welcome_message must not exceed " + WELCOME_MESSAGE_MAX + " characters");
-        }
+        validateOptionalTextLength(welcomeMessage, "welcome_message", MAX_WELCOME_MESSAGE_LENGTH);
     }
 
     public void validateFooterText(String footerText) {
-        if (footerText != null && footerText.length() > FOOTER_TEXT_MAX) {
-            throw new InvalidBrandingException(
-                    "footer_text must not exceed " + FOOTER_TEXT_MAX + " characters");
-        }
+        validateOptionalTextLength(footerText, "footer_text", MAX_FOOTER_TEXT_LENGTH);
     }
 
-    public void validateHexColor(String fieldName, String colorValue) {
-        if (colorValue == null || colorValue.isBlank()) {
-            throw new InvalidBrandingException(fieldName + " is required");
+    public void validateCopyrightText(String copyrightText) {
+        validateOptionalTextLength(copyrightText, "copyright_text", MAX_COPYRIGHT_TEXT_LENGTH);
+    }
+
+    public void validateHexColor(String fieldName, String color) {
+
+        if (!StringUtils.hasText(color)) {
+            throw validationException(fieldName, "Color value must not be blank");
         }
-        if (!HEX_COLOR_PATTERN.matcher(colorValue).matches()) {
-            throw new InvalidBrandingException(
-                    fieldName + " must be a valid 6-digit hex color (e.g. #1A2B3C)");
+
+        String normalizedColor = color.trim();
+
+        if (!HEX_COLOR_PATTERN.matcher(normalizedColor).matches()) {
+            log.warn("Branding validation failed for field='{}': invalid HEX format", fieldName);
+
+            throw validationException(fieldName, "Color must be a valid 6-digit HEX value such as #0052CC");
         }
+        log.debug("Branding HEX color validation successful for field='{}'", fieldName);
+    }
+
+    public void validateOptionalHexColor(String fieldName, String color) {
+        if (!StringUtils.hasText(color)) {
+            return;
+        }
+        validateHexColor(fieldName, color);
     }
 
     public void validateTheme(String theme) {
-        if (theme == null || theme.isBlank()) {
-            throw new InvalidBrandingException("theme is required");
+
+        if (!StringUtils.hasText(theme)) {
+            throw validationException("theme", "Theme must be provided");
         }
-        if (!ALLOWED_THEMES.contains(theme.toUpperCase())) {
-            throw new InvalidBrandingException("theme must be one of: " + ALLOWED_THEMES);
+
+        String normalizedTheme = theme.trim().toUpperCase(Locale.ROOT);
+
+        if (!LIGHT_THEME.equals(normalizedTheme)
+                && !DARK_THEME.equals(normalizedTheme)) {
+
+            log.warn("Branding validation failed for field='theme': unsupported value='{}'", normalizedTheme);
+
+            throw validationException("theme", "Theme must be LIGHT or DARK");
         }
+
+        log.debug("Branding theme validation successful: theme='{}'", normalizedTheme);
     }
 
-    public void validateLogo(MultipartFile logo) {
-        validateFile(logo, "logo", LOGO_ALLOWED_TYPES, LOGO_MAX_BYTES);
-    }
-
-    public void validateBackgroundImage(MultipartFile background) {
-        validateFile(background, "background", BACKGROUND_ALLOWED_TYPES, BACKGROUND_MAX_BYTES);
-    }
-
-    public void validateFavicon(MultipartFile favicon) {
-        validateFile(favicon, "favicon", LOGO_ALLOWED_TYPES, LOGO_MAX_BYTES);
-    }
-
-    public void validateEmailHeaderLogo(MultipartFile emailLogo) {
-        validateFile(emailLogo, "email_header_logo", LOGO_ALLOWED_TYPES, LOGO_MAX_BYTES);
-    }
-
-    private void validateFile(MultipartFile file, String fieldName,
-                              List<String> allowedTypes, long maxBytes) {
-        if (file == null || file.isEmpty()) {
+    public void validateOptionalTheme(String theme) {
+        if (!StringUtils.hasText(theme)) {
             return;
         }
-        String contentType = file.getContentType();
-        if (contentType == null || !allowedTypes.contains(contentType.toLowerCase())) {
-            throw new InvalidBrandingException(fieldName + " must be one of: " + allowedTypes);
+        validateTheme(theme);
+    }
+
+    private void validateRequiredText(String value, String fieldName, int maxLength) {
+
+        if (!StringUtils.hasText(value)) {
+            log.warn("Branding validation failed for field='{}': required value is blank", fieldName);
+            throw validationException(fieldName, fieldName + " is required");
         }
-        if (file.getSize() > maxBytes) {
-            throw new InvalidBrandingException(
-                    fieldName + " exceeds max size of " + (maxBytes / (1024 * 1024)) + "MB");
+
+        String normalizedValue = value.trim();
+
+        if (normalizedValue.length() > maxLength) {
+            log.warn("Branding validation failed for field='{}': length={} exceeds maxLength={}", fieldName, normalizedValue.length(), maxLength);
+            throw validationException(fieldName, fieldName + " must not exceed " + maxLength + " characters");
         }
+
+        log.debug("Branding validation successful for required field='{}'", fieldName);
+    }
+
+    private void validateOptionalTextLength(String value, String fieldName, int maxLength) {
+
+        if (!StringUtils.hasText(value)) {
+            return;
+        }
+        String normalizedValue = value.trim();
+
+        if (normalizedValue.length() > maxLength) {
+            log.warn("Branding validation failed for field='{}': length={} exceeds maxLength={}", fieldName, normalizedValue.length(), maxLength);
+            throw validationException(fieldName, fieldName + " must not exceed " + maxLength + " characters");
+        }
+
+        log.debug("Branding validation successful for optional field='{}'", fieldName);
+    }
+
+    private IllegalArgumentException validationException(String fieldName, String message) {
+        return new IllegalArgumentException("Invalid branding field '" + fieldName + "': " + message);
     }
 }
