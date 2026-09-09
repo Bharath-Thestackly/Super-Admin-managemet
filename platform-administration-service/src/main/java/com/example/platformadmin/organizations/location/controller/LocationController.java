@@ -1,12 +1,12 @@
-package com.example.microservice.organizations.location.controller;
+package com.example.platformadmin.organizations.location.controller;
 
-import com.example.microservice.common.abstracts.AbstractController;
-import com.example.microservice.common.response.ApiResponse;
-import com.example.microservice.common.response.PageResponse;
-import com.example.microservice.organizations.location.dto.LocationRequestDto;
-import com.example.microservice.organizations.location.dto.LocationResponseDto;
-import com.example.microservice.organizations.location.entity.LocationEntity;
-import com.example.microservice.organizations.location.service.LocationService;
+import com.example.common.abstracts.AbstractController;
+import com.example.common.response.ApiResponse;
+import com.example.common.response.PageResponse;
+import com.example.platformadmin.organizations.location.dto.LocationRequestDto;
+import com.example.platformadmin.organizations.location.dto.LocationResponseDto;
+import com.example.platformadmin.organizations.location.entity.LocationEntity;
+import com.example.platformadmin.organizations.location.service.LocationService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

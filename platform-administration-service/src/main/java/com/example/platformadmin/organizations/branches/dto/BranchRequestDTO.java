@@ -1,24 +1,23 @@
-package com.example.microservice.organisations.branches.entity;
+package com.example.platformadmin.organizations.branches.dto;
 
-import com.example.microservice.common.abstracts.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
-@Entity
-@Table(name = "branches")
-public class BranchEntity extends BaseEntity {
+public class BranchRequestDTO {
 
-    @Column(name = "branch_code", nullable = false, unique = true)
+    @NotBlank(message = "Branch code is required")
+    @Size(max = 50, message = "Branch code must not exceed 50 characters")
     private String branchCode;
 
-    @Column(name = "branch_name", nullable = false)
+    @NotBlank(message = "Branch name is required")
+    @Size(max = 100, message = "Branch name must not exceed 100 characters")
     private String branchName;
 
-    @Column(name = "description")
+    @Size(max = 255, message = "Description must not exceed 255 characters")
     private String description;
 
-    @Column(name = "status", nullable = false)
+    @NotBlank(message = "Status is required")
+    @Size(max = 20, message = "Status must not exceed 20 characters")
     private String status;
 
     public String getBranchCode() {
