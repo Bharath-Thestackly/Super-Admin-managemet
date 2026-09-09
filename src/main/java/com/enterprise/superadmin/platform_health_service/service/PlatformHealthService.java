@@ -1,37 +1,55 @@
 package com.enterprise.superadmin.platform_health_service.service;
 
-import com.enterprise.superadmin.platform_health_service.HealthStatus;
+import com.enterprise.superadmin.platform_health_service.dto.response.PlatformHealthResponse;
 import com.enterprise.superadmin.platform_health_service.dto.response.ServiceHealthResponse;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class PlatformHealthService {
 
-    private final ServiceHealthService serviceHealthService;
-    private final HealthAggregationService healthAggregationService;
+    public PlatformHealthResponse getPlatformHealth() {
 
-    public PlatformHealthService(
-            ServiceHealthService serviceHealthService,
-            HealthAggregationService healthAggregationService) {
+        List<ServiceHealthResponse> services =
+                getAllServicesHealth();
 
-        this.serviceHealthService = serviceHealthService;
-        this.healthAggregationService = healthAggregationService;
+        boolean availability = services.stream()
+                .allMatch(ServiceHealthResponse::isAvailability);
+
+        String status;
+
+        if (services.isEmpty()) {
+            status = "FAILED";
+            availability = false;
+        } else if (availability) {
+            status = "HEALTHY";
+        } else {
+            status = "DEGRADED";
+        }
+
+        return PlatformHealthResponse.builder()
+                .status(status)
+                .availability(availability)
+                .retrievedAt(LocalDateTime.now())
+                .services(services)
+                .build();
     }
 
-    public HealthStatus determinePlatformHealth(
-            List<ServiceHealthResponse> healthResponses) {
+    public List<ServiceHealthResponse> getAllServicesHealth() {
 
-        List<ServiceHealthResponse> validatedResponses =
-                serviceHealthService.validateHealthResponses(healthResponses);
+        return new ArrayList<>();
+    }
 
-        List<HealthStatus> statuses = validatedResponses.stream()
-                .map(response ->
-                        HealthStatus.valueOf(
-                                response.getStatus().trim().toUpperCase()))
-                .toList();
+    public ServiceHealthResponse getServiceHealth(String serviceName) {
 
-        return healthAggregationService.determineOverallStatus(statuses);
+        return ServiceHealthResponse.builder()
+                .serviceName(serviceName)
+                .status("UNKNOWN")
+                .availability(false)
+                .responseTimeMs(null)
+                .build();
     }
 }
