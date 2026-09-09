@@ -1,6 +1,5 @@
 package com.enterprise.superadmin.feature_management_service.controller;
 
-
 import com.enterprise.superadmin.feature_management_service.dto.request.FeatureCreateRequest;
 import com.enterprise.superadmin.feature_management_service.dto.request.FeatureUpdateRequest;
 import com.enterprise.superadmin.feature_management_service.dto.response.FeatureResponse;
@@ -78,7 +77,8 @@ public class FeatureController {
         return ResponseEntity.ok(
                 featureService.updateFeature(
                         id,
-                        request
+                        request,
+                        userId
                 )
         );
     }
@@ -125,4 +125,3 @@ public class FeatureController {
         );
     }
 }
-
