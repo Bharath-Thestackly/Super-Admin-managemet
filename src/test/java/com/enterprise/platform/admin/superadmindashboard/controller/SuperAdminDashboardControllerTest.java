@@ -1,14 +1,16 @@
 package com.enterprise.platform.admin.superadmindashboard.controller;
 
-import com.enterprise.platform.admin.superadmindashboard.config.RoleHeaderAuthenticationFilter;
-import com.enterprise.platform.admin.superadmindashboard.config.SecurityConfig;
+import com.enterprise.platform.admin.superadmindashboard.dto.response.DashboardStatisticsResponse;
+import com.enterprise.platform.admin.superadmindashboard.dto.response.DashboardSummaryResponse;
 import com.enterprise.platform.admin.superadmindashboard.dto.response.SuperAdminDashboardResponse;
 import com.enterprise.platform.admin.superadmindashboard.service.SuperAdminDashboardService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -18,54 +20,83 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(SuperAdminDashboardController.class)
-@Import({SecurityConfig.class, RoleHeaderAuthenticationFilter.class})
-class SuperAdminDashboardControllerTest {
+@SpringBootTest
+@AutoConfigureMockMvc
+public class SuperAdminDashboardControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockitoBean
+    @MockBean
     private SuperAdminDashboardService dashboardService;
 
     @Test
-    void getSummary_withoutSuperAdminRole_isRejected() throws Exception {
-        mockMvc.perform(get("/api/v1/admin/dashboard/summary"))
-                .andExpect(status().is4xxClientError());
+    @DisplayName("GET /api/v1/admin/dashboard returns 401 when unauthenticated")
+    void testGetDashboardUnauthorized() throws Exception {
+        mockMvc.perform(get("/api/v1/admin/dashboard"))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void getSummary_withSuperAdminRole_returnsOk() throws Exception {
+    @DisplayName("GET /api/v1/admin/dashboard returns 403 when user is not SUPER_ADMIN")
+    @WithMockUser(roles = "USER")
+    void testGetDashboardForbiddenForNonAdmin() throws Exception {
+        mockMvc.perform(get("/api/v1/admin/dashboard"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/admin/dashboard returns 200 with consolidated data for SUPER_ADMIN")
+    @WithMockUser(roles = "SUPER_ADMIN")
+    void testGetDashboardSuccess() throws Exception {
         SuperAdminDashboardResponse response = new SuperAdminDashboardResponse(
-                25L, 450L, 18L, "UP", 127L, 68.5,
-                List.of("License renewal due for Tenant ABC"),
-                List.of("Tenant ABC created"));
+                45L, 620L, 40L, "UP", 150L, 72.4,
+                List.of("System Alert 1"),
+                List.of("New Tenant ABC registered")
+        );
 
-        when(dashboardService.getDashboardSummary()).thenReturn(response);
+        when(dashboardService.getDashboard()).thenReturn(response);
 
-        mockMvc.perform(get("/api/v1/admin/dashboard/summary")
-                        .header("X-User-Role", "SUPER_ADMIN"))
+        mockMvc.perform(get("/api/v1/admin/dashboard"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalTenants").value(25))
+                .andExpect(jsonPath("$.totalTenants").value(45))
+                .andExpect(jsonPath("$.totalUsers").value(620))
+                .andExpect(jsonPath("$.activeSubscriptions").value(40))
+                .andExpect(jsonPath("$.platformHealthStatus").value("UP"))
+                .andExpect(jsonPath("$.activeSessions").value(150))
+                .andExpect(jsonPath("$.storageUtilization").value(72.4))
+                .andExpect(jsonPath("$.systemAlerts[0]").value("System Alert 1"));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/admin/dashboard/summary returns 200 with summary data")
+    @WithMockUser(roles = "SUPER_ADMIN")
+    void testGetDashboardSummary() throws Exception {
+        DashboardSummaryResponse summary = new DashboardSummaryResponse(45L, 620L, 40L, "UP");
+
+        when(dashboardService.getDashboardSummary()).thenReturn(summary);
+
+        mockMvc.perform(get("/api/v1/admin/dashboard/summary"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalTenants").value(45))
+                .andExpect(jsonPath("$.totalUsers").value(620))
+                .andExpect(jsonPath("$.activeSubscriptions").value(40))
                 .andExpect(jsonPath("$.platformHealthStatus").value("UP"));
     }
 
     @Test
-    void getDashboard_withoutSuperAdminRole_isRejected() throws Exception {
-        mockMvc.perform(get("/api/v1/admin/dashboard"))
-                .andExpect(status().is4xxClientError());
-    }
+    @DisplayName("GET /api/v1/admin/dashboard/statistics returns 200 with statistics data")
+    @WithMockUser(roles = "SUPER_ADMIN")
+    void testGetDashboardStatistics() throws Exception {
+        DashboardStatisticsResponse stats = new DashboardStatisticsResponse(
+                45L, 620L, 40L, "UP", 150L, 72.4, 1L
+        );
 
-    @Test
-    void getStatistics_withSuperAdminRole_returnsOk() throws Exception {
-        SuperAdminDashboardResponse response = new SuperAdminDashboardResponse(
-                25L, 450L, 18L, "UP", 127L, 68.5,
-                List.of(), List.of());
+        when(dashboardService.getDashboardStatistics()).thenReturn(stats);
 
-        when(dashboardService.getDashboardStatistics()).thenReturn(response);
-
-        mockMvc.perform(get("/api/v1/admin/dashboard/statistics")
-                        .header("X-User-Role", "SUPER_ADMIN"))
-                .andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/admin/dashboard/statistics"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalTenants").value(45))
+                .andExpect(jsonPath("$.systemAlertsCount").value(1));
     }
 }
