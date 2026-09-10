@@ -7,7 +7,7 @@ import com.enterprise.superadmin.license_management_service.dto.response.License
 import com.enterprise.superadmin.license_management_service.dto.response.LicenseStatusResponse;
 import com.enterprise.superadmin.license_management_service.enums.LicenseStatus;
 import com.enterprise.superadmin.license_management_service.enums.LicenseType;
-import com.enterprise.superadmin.license_management_service.LicenseService;
+import com.enterprise.superadmin.license_management_service.service.LicenseService;
 
 import org.junit.jupiter.api.Test;
 

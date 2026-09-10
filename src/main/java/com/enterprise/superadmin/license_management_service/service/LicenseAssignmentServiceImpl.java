@@ -1,4 +1,4 @@
-package com.enterprise.superadmin.license_management_service;
+package com.enterprise.superadmin.license_management_service.service;
 
 
 import com.enterprise.superadmin.license_management_service.dto.request.LicenseAssignmentRequest;
