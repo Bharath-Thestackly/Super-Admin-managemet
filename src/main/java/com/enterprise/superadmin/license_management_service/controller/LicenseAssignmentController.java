@@ -4,7 +4,7 @@ package com.enterprise.superadmin.license_management_service.controller;
 
 import com.enterprise.superadmin.license_management_service.dto.request.LicenseAssignmentRequest;
 import com.enterprise.superadmin.license_management_service.dto.response.LicenseResponse;
-import com.enterprise.superadmin.license_management_service.service.LicenseAssignmentService;
+import com.enterprise.superadmin.license_management_service.LicenseAssignmentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

@@ -1,4 +1,4 @@
-package com.enterprise.superadmin.service;
+package com.enterprise.superadmin.feature_management_service.service;
 
 import com.enterprise.superadmin.feature_management_service.dto.request.FeatureCreateRequest;
 import com.enterprise.superadmin.feature_management_service.dto.request.FeatureUpdateRequest;

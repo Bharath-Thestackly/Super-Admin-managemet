@@ -1,4 +1,4 @@
-package com.enterprise.superadmin.repository;
+package com.enterprise.superadmin.license_management_service.repository;
 
 import com.enterprise.superadmin.license_management_service.entity.LicenseAssignment;
 import com.enterprise.superadmin.license_management_service.repository.LicenseAssignmentRepository;

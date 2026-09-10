@@ -1,11 +1,10 @@
-package com.enterprise.superadmin.controller;
+package com.enterprise.superadmin.license_management_service.controller;
 
-import com.enterprise.superadmin.license_management_service.controller.LicenseAssignmentController;
 import com.enterprise.superadmin.license_management_service.dto.request.LicenseAssignmentRequest;
 import com.enterprise.superadmin.license_management_service.dto.response.LicenseResponse;
 import com.enterprise.superadmin.license_management_service.enums.LicenseStatus;
 import com.enterprise.superadmin.license_management_service.enums.LicenseType;
-import com.enterprise.superadmin.license_management_service.service.LicenseAssignmentService;
+import com.enterprise.superadmin.license_management_service.LicenseAssignmentService;
 
 import org.junit.jupiter.api.Test;
 

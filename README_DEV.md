@@ -24,7 +24,7 @@ Main startup class:
 The relevant code is organized as follows:
 
 - [src/main/java/com/enterprise/superadmin/license_management_service/controller](src/main/java/com/enterprise/superadmin/license_management_service/controller) – REST endpoints
-- [src/main/java/com/enterprise/superadmin/license_management_service/service](src/main/java/com/enterprise/superadmin/license_management_service/service) – business logic and status transitions
+- [src/main/java/com/enterprise/superadmin/license_management_service/service](src/main/java/com/enterprise/superadmin/license_management_service) – business logic and status transitions
 - [src/main/java/com/enterprise/superadmin/license_management_service/repository](src/main/java/com/enterprise/superadmin/license_management_service/repository) – JPA queries
 - [src/main/java/com/enterprise/superadmin/license_management_service/entity](src/main/java/com/enterprise/superadmin/license_management_service/entity) – entity models
 - [src/main/java/com/enterprise/superadmin/license_management_service/dto](src/main/java/com/enterprise/superadmin/license_management_service/dto) – request and response contracts
@@ -273,8 +273,8 @@ Important test coverage includes:
 
 - [src/main/java/com/enterprise/superadmin/license_management_service/controller/LicenseController.java](src/main/java/com/enterprise/superadmin/license_management_service/controller/LicenseController.java)
 - [src/main/java/com/enterprise/superadmin/license_management_service/controller/LicenseAssignmentController.java](src/main/java/com/enterprise/superadmin/license_management_service/controller/LicenseAssignmentController.java)
-- [src/main/java/com/enterprise/superadmin/license_management_service/service/LicenseServiceImpl.java](src/main/java/com/enterprise/superadmin/license_management_service/service/LicenseServiceImpl.java)
-- [src/main/java/com/enterprise/superadmin/license_management_service/service/LicenseAssignmentServiceImpl.java](src/main/java/com/enterprise/superadmin/license_management_service/service/LicenseAssignmentServiceImpl.java)
+- [src/main/java/com/enterprise/superadmin/license_management_service/service/LicenseServiceImpl.java](src/main/java/com/enterprise/superadmin/license_management_service/LicenseServiceImpl.java)
+- [src/main/java/com/enterprise/superadmin/license_management_service/service/LicenseAssignmentServiceImpl.java](src/main/java/com/enterprise/superadmin/license_management_service/LicenseAssignmentServiceImpl.java)
 - [src/test/java/com/enterprise/superadmin/controller/LicenseControllerTest.java](src/test/java/com/enterprise/superadmin/controller/LicenseControllerTest.java)
 - [src/test/java/com/enterprise/superadmin/controller/LicenseAssigmentControllerTest.java](src/test/java/com/enterprise/superadmin/controller/LicenseAssigmentControllerTest.java)
 
