@@ -1,12 +1,11 @@
 package com.enterprise.superadmin.license_management_service.exception;
 
-
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
@@ -81,6 +80,31 @@ public class GlobalExceptionHandler {
         return build(
                 HttpStatus.BAD_REQUEST,
                 "VALIDATION_ERROR",
+                message
+        );
+    }
+
+    /**
+     * Handles invalid UUID/path/query/header parameters.
+     *
+     * Example:
+     * /licenses/invalid-uuid
+     * X-Actor-Id: invalid-uuid
+     */
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleTypeMismatch(
+            MethodArgumentTypeMismatchException exception
+    ) {
+
+        String message =
+                exception.getName()
+                        + ": invalid value '"
+                        + exception.getValue()
+                        + "'";
+
+        return build(
+                HttpStatus.BAD_REQUEST,
+                "INVALID_PARAMETER",
                 message
         );
     }
