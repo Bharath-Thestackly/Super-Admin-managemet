@@ -1,0 +1,80 @@
+# Server configuration
+server:
+  port: ${SERVER_PORT:8081}
+
+# Application configuration
+spring:
+
+  # Application name
+  application:
+    name: platform-settings-service
+
+  # PostgreSQL database configuration
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/cloud_platform}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:your_password}
+    driver-class-name: org.postgresql.Driver
+
+  # JPA configuration
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  # Flyway database migration configuration
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 0
+    locations: classpath:db/migration
+#  web:
+#    error:
+#      include-message: always
+#      include-stacktrace: always
+
+  # JWT configuration
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${JWT_ISSUER_URI:http://localhost:9000}
+
+# Actuator configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+  endpoint:
+    health:
+      show-details: when_authorized
+
+# Swagger/OpenAPI configuration
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+
+# Application Logging
+logging:
+  level:
+    com.enterprise.platform.settings: INFO
+
+# Application-specific security configuration
+#app:
+#  security:
+#    enabled: ${SECURITY_ENABLED:false}
+
+# Application information shown by Actuator
+info:
+  app:
+    name: Platform Settings Service
+    version: 0.0.1-SNAPSHOT
+    description: Platform-wide settings management service
