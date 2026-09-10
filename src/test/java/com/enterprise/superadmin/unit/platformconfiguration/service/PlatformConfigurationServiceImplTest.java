@@ -1,4 +1,4 @@
-package com.enterprise.superadmin.unit.service;
+package com.enterprise.superadmin.unit.platformconfiguration.service;
 
 import com.enterprise.superadmin.platformconfiguration.dto.request.PlatformConfigurationCreateRequest;
 import com.enterprise.superadmin.platformconfiguration.dto.request.PlatformConfigurationStatusUpdateRequest;

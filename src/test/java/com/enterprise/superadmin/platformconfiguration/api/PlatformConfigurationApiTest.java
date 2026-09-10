@@ -1,4 +1,4 @@
-package com.enterprise.superadmin.api;
+package com.enterprise.superadmin.platformconfiguration.api;
 
 import com.enterprise.superadmin.platformconfiguration.entity.PlatformConfiguration;
 import com.enterprise.superadmin.platformconfiguration.entity.PlatformConfigurationHistory;

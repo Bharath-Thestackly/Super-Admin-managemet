@@ -1,4 +1,4 @@
-package com.enterprise.superadmin.exception;
+package com.enterprise.superadmin.platformconfiguration.exceptiontest;
 
 import com.enterprise.superadmin.platformconfiguration.exception.ApiError;
 import com.enterprise.superadmin.platformconfiguration.exception.ConfigurationActivationException;

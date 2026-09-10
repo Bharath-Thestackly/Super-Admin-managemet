@@ -1,4 +1,4 @@
-package com.enterprise.superadmin.unit.controller;
+package com.enterprise.superadmin.unit.platformconfiguration.controller;
 
 import com.enterprise.superadmin.platformconfiguration.controller.PlatformConfigurationController;
 import com.enterprise.superadmin.platformconfiguration.dto.request.PlatformConfigurationCreateRequest;

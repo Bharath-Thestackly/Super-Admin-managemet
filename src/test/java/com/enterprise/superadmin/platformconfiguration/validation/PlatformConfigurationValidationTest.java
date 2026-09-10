@@ -1,4 +1,4 @@
-package com.enterprise.superadmin.validation;
+package com.enterprise.superadmin.platformconfiguration.validation;
 
 import com.enterprise.superadmin.platformconfiguration.dto.request.PlatformConfigurationCreateRequest;
 import com.enterprise.superadmin.platformconfiguration.dto.request.PlatformConfigurationStatusUpdateRequest;
