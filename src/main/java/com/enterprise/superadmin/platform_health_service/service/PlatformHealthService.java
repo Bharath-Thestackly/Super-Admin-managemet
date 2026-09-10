@@ -1,16 +1,22 @@
 package com.enterprise.superadmin.platform_health_service.service;
 
-import com.enterprise.platformhealthservice.integration.ServiceHealthClient;
-import com.enterprise.platformhealthservice.integration.ServiceHealthResult;
+
+
 import com.enterprise.superadmin.platform_health_service.HealthStatus;
 import com.enterprise.superadmin.platform_health_service.dto.response.PlatformHealthResponse;
 import com.enterprise.superadmin.platform_health_service.dto.response.ServiceHealthResponse;
+import com.enterprise.superadmin.platform_health_service.integration.ServiceHealthClient;
+import com.enterprise.superadmin.platform_health_service.integration.ServiceHealthResult;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+/**
+ * Service responsible for aggregating the health status of all services in the platform.
+ */
 
 @Service
 public class PlatformHealthService {
