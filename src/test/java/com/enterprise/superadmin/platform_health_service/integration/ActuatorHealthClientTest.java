@@ -1,10 +1,9 @@
-package com.enterprise.platformhealthservice.integration;
+package com.enterprise.superadmin.platform_health_service.integration;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.web.client.RestClient;
 
-import java.net.URI;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
