@@ -1,11 +1,15 @@
 package com.enterprise.superadmin.platform_health_service.service;
 
+import com.enterprise.platformhealthservice.integration.ServiceHealthClient;
+import com.enterprise.platformhealthservice.integration.ServiceHealthResult;
 import com.enterprise.superadmin.platform_health_service.HealthStatus;
 import com.enterprise.superadmin.platform_health_service.dto.response.PlatformHealthResponse;
 import com.enterprise.superadmin.platform_health_service.dto.response.ServiceHealthResponse;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -13,13 +17,19 @@ public class PlatformHealthService {
 
     private final ServiceHealthService serviceHealthService;
     private final HealthAggregationService healthAggregationService;
+    private final ServiceHealthClient serviceHealthClient;
+    private final DiscoveryClient discoveryClient;
 
     public PlatformHealthService(
             ServiceHealthService serviceHealthService,
-            HealthAggregationService healthAggregationService) {
+            HealthAggregationService healthAggregationService,
+            ServiceHealthClient serviceHealthClient,
+            DiscoveryClient discoveryClient) {
 
         this.serviceHealthService = serviceHealthService;
         this.healthAggregationService = healthAggregationService;
+        this.serviceHealthClient = serviceHealthClient;
+        this.discoveryClient = discoveryClient;
     }
 
     public PlatformHealthResponse getPlatformHealth() {
@@ -60,16 +70,91 @@ public class PlatformHealthService {
     }
 
     public List<ServiceHealthResponse> getAllServicesHealth() {
-        return List.of();
+
+        List<ServiceHealthResponse> services = new ArrayList<>();
+
+        List<String> serviceNames = discoveryClient.getServices();
+
+        if (serviceNames == null || serviceNames.isEmpty()) {
+            return services;
+        }
+
+        for (String serviceName : serviceNames) {
+
+            try {
+                ServiceHealthResult result =
+                        serviceHealthClient.getHealth(serviceName);
+
+                String status = mapStatus(result.status());
+
+                boolean availability =
+                        HealthStatus.HEALTHY.name().equals(status);
+
+                services.add(
+                        ServiceHealthResponse.builder()
+                                .serviceName(result.serviceName())
+                                .status(status)
+                                .availability(availability)
+                                .responseTimeMs(null)
+                                .build()
+                );
+
+            } catch (Exception exception) {
+
+                services.add(
+                        ServiceHealthResponse.builder()
+                                .serviceName(serviceName)
+                                .status(HealthStatus.DEGRADED.name())
+                                .availability(false)
+                                .responseTimeMs(null)
+                                .build()
+                );
+            }
+        }
+
+        return services;
     }
 
     public ServiceHealthResponse getServiceHealth(String serviceName) {
 
-        return ServiceHealthResponse.builder()
-                .serviceName(serviceName)
-                .status(HealthStatus.DEGRADED.name())
-                .availability(false)
-                .responseTimeMs(null)
-                .build();
+        try {
+            ServiceHealthResult result =
+                    serviceHealthClient.getHealth(serviceName);
+
+            String status = mapStatus(result.status());
+
+            boolean availability =
+                    HealthStatus.HEALTHY.name().equals(status);
+
+            return ServiceHealthResponse.builder()
+                    .serviceName(result.serviceName())
+                    .status(status)
+                    .availability(availability)
+                    .responseTimeMs(null)
+                    .build();
+
+        } catch (Exception exception) {
+
+            return ServiceHealthResponse.builder()
+                    .serviceName(serviceName)
+                    .status(HealthStatus.DEGRADED.name())
+                    .availability(false)
+                    .responseTimeMs(null)
+                    .build();
+        }
+    }
+
+    private String mapStatus(String status) {
+
+        if (status == null || status.isBlank()) {
+            return HealthStatus.DEGRADED.name();
+        }
+
+        return switch (status.trim().toUpperCase()) {
+            case "UP" -> HealthStatus.HEALTHY.name();
+            case "DOWN" -> HealthStatus.FAILED.name();
+            case "DEGRADED" -> HealthStatus.DEGRADED.name();
+            default -> HealthStatus.DEGRADED.name();
+        };
     }
 }

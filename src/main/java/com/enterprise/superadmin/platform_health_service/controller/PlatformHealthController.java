@@ -1,7 +1,9 @@
 package com.enterprise.superadmin.platform_health_service.controller;
 
+import com.enterprise.superadmin.platform_health_service.dto.response.DatabaseHealthResponse;
 import com.enterprise.superadmin.platform_health_service.dto.response.PlatformHealthResponse;
 import com.enterprise.superadmin.platform_health_service.dto.response.ServiceHealthResponse;
+import com.enterprise.superadmin.platform_health_service.service.DatabaseHealthService;
 import com.enterprise.superadmin.platform_health_service.service.PlatformHealthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -16,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/admin/platform/health")
+@RequestMapping("/api/v1/health")
 @RequiredArgsConstructor
 @Validated
 @Tag(
@@ -26,6 +28,7 @@ import java.util.List;
 public class PlatformHealthController {
 
     private final PlatformHealthService platformHealthService;
+    private final DatabaseHealthService databaseHealthService;
 
     @GetMapping
     @Operation(
@@ -35,10 +38,6 @@ public class PlatformHealthController {
     @ApiResponse(
             responseCode = "200",
             description = "Platform health retrieved successfully"
-    )
-    @ApiResponse(
-            responseCode = "404",
-            description = "Platform health information not found"
     )
     public ResponseEntity<PlatformHealthResponse> getPlatformHealth() {
 
@@ -57,14 +56,6 @@ public class PlatformHealthController {
             responseCode = "200",
             description = "Service health information retrieved successfully"
     )
-    @ApiResponse(
-            responseCode = "400",
-            description = "Invalid health request"
-    )
-    @ApiResponse(
-            responseCode = "404",
-            description = "No service health information found"
-    )
     public ResponseEntity<List<ServiceHealthResponse>> getAllServicesHealth() {
 
         List<ServiceHealthResponse> response =
@@ -73,7 +64,24 @@ public class PlatformHealthController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{serviceName}")
+    @GetMapping("/database")
+    @Operation(
+            summary = "Get database health",
+            description = "Returns the health status of the platform database"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "Database health retrieved successfully"
+    )
+    public ResponseEntity<DatabaseHealthResponse> getDatabaseHealth() {
+
+        DatabaseHealthResponse response =
+                databaseHealthService.getDatabaseHealth();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/services/{serviceName}")
     @Operation(
             summary = "Get health of a specific service",
             description = "Returns health information for the requested service"
@@ -81,14 +89,6 @@ public class PlatformHealthController {
     @ApiResponse(
             responseCode = "200",
             description = "Service health information retrieved successfully"
-    )
-    @ApiResponse(
-            responseCode = "400",
-            description = "Invalid service name"
-    )
-    @ApiResponse(
-            responseCode = "404",
-            description = "Service not found"
     )
     public ResponseEntity<ServiceHealthResponse> getServiceHealth(
             @PathVariable
