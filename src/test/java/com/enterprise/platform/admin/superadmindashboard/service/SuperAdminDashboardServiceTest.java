@@ -1,13 +1,10 @@
 package com.enterprise.platform.admin.superadmindashboard.service;
 
-import com.enterprise.platform.admin.superadmindashboard.client.PlatformHealthClient;
-import com.enterprise.platform.admin.superadmindashboard.client.SubscriptionClient;
-import com.enterprise.platform.admin.superadmindashboard.client.TenantClient;
-import com.enterprise.platform.admin.superadmindashboard.client.UserClient;
+import com.enterprise.platform.admin.superadmindashboard.client.DashboardContractClient;
+import com.enterprise.platform.admin.superadmindashboard.client.GlobalDashboardContractResponse;
 import com.enterprise.platform.admin.superadmindashboard.dto.response.DashboardStatisticsResponse;
 import com.enterprise.platform.admin.superadmindashboard.dto.response.DashboardSummaryResponse;
 import com.enterprise.platform.admin.superadmindashboard.dto.response.SuperAdminDashboardResponse;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,35 +22,29 @@ import static org.mockito.Mockito.when;
 public class SuperAdminDashboardServiceTest {
 
     @Mock
-    private PlatformHealthClient platformHealthClient;
-
-    @Mock
-    private TenantClient tenantClient;
-
-    @Mock
-    private UserClient userClient;
-
-    @Mock
-    private SubscriptionClient subscriptionClient;
+    private DashboardContractClient dashboardContractClient;
 
     @InjectMocks
     private SuperAdminDashboardServiceImpl dashboardService;
 
-    @BeforeEach
-    void setup() {
-        when(platformHealthClient.getPlatformHealth()).thenReturn("UP");
-        when(platformHealthClient.getStorageUtilization()).thenReturn(Optional.of(55.0));
+    private GlobalDashboardContractResponse buildContract() {
+        return new GlobalDashboardContractResponse(
+                new GlobalDashboardContractResponse.Summary(30L, 25L, 500L, 480L, 120L),
+                new GlobalDashboardContractResponse.Metrics(35.5, 48.2, 55.0, 12500L, 320L, 7L, 28L),
+                new GlobalDashboardContractResponse.Status("HEALTHY", 5L, 0L, 0L),
+                List.of(new GlobalDashboardContractResponse.RecentActivity(
+                        "ACT-001", "Tenant created successfully", "admin@jsuite.com",
+                        "Tenant Management", "2026-09-10T14:36:55.5658996")),
+                List.of(new GlobalDashboardContractResponse.Notification(
+                        "NOT-001", "License Renewal Due", "License renewal due soon", "WARNING",
+                        "2026-09-10T14:31:55.5658996"))
+        );
     }
 
     @Test
-    @DisplayName("Full aggregation succeeds with all downstream clients healthy")
+    @DisplayName("Full aggregation succeeds when global dashboard contract is available")
     void testFullAggregationSuccess() {
-        when(tenantClient.getTotalTenants()).thenReturn(Optional.of(30L));
-        when(tenantClient.getRecentTenantActivities()).thenReturn(List.of("Tenant Org1 created"));
-        when(userClient.getTotalUsers()).thenReturn(Optional.of(500L));
-        when(userClient.getActiveSessions()).thenReturn(Optional.of(120L));
-        when(subscriptionClient.getActiveSubscriptions()).thenReturn(Optional.of(28L));
-        when(subscriptionClient.getSubscriptionAlerts()).thenReturn(List.of("License renewal due"));
+        when(dashboardContractClient.getGlobalDashboardContract()).thenReturn(Optional.of(buildContract()));
 
         SuperAdminDashboardResponse response = dashboardService.getDashboard();
 
@@ -61,68 +52,52 @@ public class SuperAdminDashboardServiceTest {
         assertEquals(30L, response.getTotalTenants());
         assertEquals(500L, response.getTotalUsers());
         assertEquals(28L, response.getActiveSubscriptions());
-        assertEquals("UP", response.getPlatformHealthStatus());
+        assertEquals("HEALTHY", response.getPlatformHealthStatus());
         assertEquals(120L, response.getActiveSessions());
         assertEquals(55.0, response.getStorageUtilization());
-        assertTrue(response.getSystemAlerts().contains("License renewal due"));
-        assertTrue(response.getRecentActivities().contains("Tenant Org1 created"));
+        assertTrue(response.getSystemAlerts().get(0).contains("License Renewal Due"));
+        assertTrue(response.getRecentActivities().get(0).contains("Tenant created successfully"));
     }
 
     @Test
-    @DisplayName("Partial failure resilience: Tenant & User services down, graceful degradation with alerts")
-    void testPartialDependencyFailureDegradation() {
-        when(tenantClient.getTotalTenants()).thenReturn(Optional.empty()); // Service down
-        when(tenantClient.getRecentTenantActivities()).thenReturn(List.of());
-        when(userClient.getTotalUsers()).thenReturn(Optional.empty()); // Service down
-        when(userClient.getActiveSessions()).thenReturn(Optional.empty());
-        when(subscriptionClient.getActiveSubscriptions()).thenReturn(Optional.of(15L));
-        when(subscriptionClient.getSubscriptionAlerts()).thenReturn(List.of());
+    @DisplayName("Graceful degradation when global dashboard contract is unavailable")
+    void testDependencyFailureDegradation() {
+        when(dashboardContractClient.getGlobalDashboardContract()).thenReturn(Optional.empty());
 
         SuperAdminDashboardResponse response = dashboardService.getDashboard();
 
         assertNotNull(response);
         assertEquals(0L, response.getTotalTenants());
         assertEquals(0L, response.getTotalUsers());
-        assertEquals(15L, response.getActiveSubscriptions());
-        assertEquals("UP", response.getPlatformHealthStatus());
-
-        // Alerts must contain dependency warnings instead of blowing up with 500
-        assertTrue(response.getSystemAlerts().stream()
-                .anyMatch(alert -> alert.contains("Tenant Service is currently unavailable")));
-        assertTrue(response.getSystemAlerts().stream()
-                .anyMatch(alert -> alert.contains("User Service is currently unavailable")));
+        assertEquals(0L, response.getActiveSubscriptions());
+        assertEquals("UNKNOWN", response.getPlatformHealthStatus());
+        assertTrue(response.getSystemAlerts().isEmpty());
+        assertTrue(response.getRecentActivities().isEmpty());
     }
 
     @Test
     @DisplayName("Summary response extracts only summary counts")
     void testSummaryMapping() {
-        when(tenantClient.getTotalTenants()).thenReturn(Optional.of(10L));
-        when(userClient.getTotalUsers()).thenReturn(Optional.of(100L));
-        when(userClient.getActiveSessions()).thenReturn(Optional.of(20L));
-        when(subscriptionClient.getActiveSubscriptions()).thenReturn(Optional.of(8L));
+        when(dashboardContractClient.getGlobalDashboardContract()).thenReturn(Optional.of(buildContract()));
 
         DashboardSummaryResponse summary = dashboardService.getDashboardSummary();
 
-        assertEquals(10L, summary.getTotalTenants());
-        assertEquals(100L, summary.getTotalUsers());
-        assertEquals(8L, summary.getActiveSubscriptions());
-        assertEquals("UP", summary.getPlatformHealthStatus());
+        assertEquals(30L, summary.getTotalTenants());
+        assertEquals(500L, summary.getTotalUsers());
+        assertEquals(28L, summary.getActiveSubscriptions());
+        assertEquals("HEALTHY", summary.getPlatformHealthStatus());
     }
 
     @Test
     @DisplayName("Statistics response formats metrics and alert count")
     void testStatisticsMapping() {
-        when(tenantClient.getTotalTenants()).thenReturn(Optional.of(10L));
-        when(userClient.getTotalUsers()).thenReturn(Optional.of(100L));
-        when(userClient.getActiveSessions()).thenReturn(Optional.of(25L));
-        when(subscriptionClient.getActiveSubscriptions()).thenReturn(Optional.of(8L));
-        when(subscriptionClient.getSubscriptionAlerts()).thenReturn(List.of("Alert 1", "Alert 2"));
+        when(dashboardContractClient.getGlobalDashboardContract()).thenReturn(Optional.of(buildContract()));
 
         DashboardStatisticsResponse stats = dashboardService.getDashboardStatistics();
 
-        assertEquals(10L, stats.getTotalTenants());
-        assertEquals(25L, stats.getActiveSessions());
+        assertEquals(30L, stats.getTotalTenants());
+        assertEquals(120L, stats.getActiveSessions());
         assertEquals(55.0, stats.getStorageUtilization());
-        assertEquals(2L, stats.getSystemAlertsCount());
+        assertEquals(1L, stats.getSystemAlertsCount());
     }
 }

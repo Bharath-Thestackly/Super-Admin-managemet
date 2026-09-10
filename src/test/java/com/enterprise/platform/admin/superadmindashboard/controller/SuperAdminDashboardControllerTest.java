@@ -1,5 +1,6 @@
 package com.enterprise.platform.admin.superadmindashboard.controller;
 
+import com.enterprise.platform.admin.superadmindashboard.dto.response.DashboardNavigationResponse;
 import com.enterprise.platform.admin.superadmindashboard.dto.response.DashboardStatisticsResponse;
 import com.enterprise.platform.admin.superadmindashboard.dto.response.DashboardSummaryResponse;
 import com.enterprise.platform.admin.superadmindashboard.dto.response.SuperAdminDashboardResponse;
@@ -98,5 +99,23 @@ public class SuperAdminDashboardControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalTenants").value(45))
                 .andExpect(jsonPath("$.systemAlertsCount").value(1));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/admin/dashboard/navigation returns 200 with navigation data for SUPER_ADMIN")
+    @WithMockUser(roles = "SUPER_ADMIN")
+    void testGetDashboardNavigationSuccess() throws Exception {
+        DashboardNavigationResponse navigation = new DashboardNavigationResponse(
+                List.of(new DashboardNavigationResponse.NavigationItem(
+                        "Tenant Management", "/api/v1/admin/tenants", "business", "SUPER_ADMIN")),
+                List.of()
+        );
+
+        when(dashboardService.getDashboardNavigation()).thenReturn(navigation);
+
+        mockMvc.perform(get("/api/v1/admin/dashboard/navigation"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items[0].title").value("Tenant Management"))
+                .andExpect(jsonPath("$.items[0].path").value("/api/v1/admin/tenants"));
     }
 }

@@ -62,6 +62,7 @@ public class PlatformHealthClient {
         } catch (Exception e) {
             log.debug("Could not determine exact storage utilization from actuator: {}", e.getMessage());
         }
-        return Optional.of(65.0); // Default standard estimate when storage metrics detail is unexposed
+        log.warn("Disk space details unavailable from actuator health endpoint. Returning empty storage utilization.");
+        return Optional.empty(); // Do not fabricate metrics when actuator disk details are absent
     }
 }

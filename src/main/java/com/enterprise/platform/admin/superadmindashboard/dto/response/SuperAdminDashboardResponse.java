@@ -1,6 +1,7 @@
 package com.enterprise.platform.admin.superadmindashboard.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,9 @@ public class SuperAdminDashboardResponse {
 
     @Schema(description = "Recent administrative activities and tenant events")
     private List<String> recentActivities = new ArrayList<>();
+
+    @Schema(description = "Dashboard data retrieval timestamp")
+    private Instant timestamp;
 
     public SuperAdminDashboardResponse() {
     }
@@ -115,5 +119,13 @@ public class SuperAdminDashboardResponse {
 
     public void setRecentActivities(List<String> recentActivities) {
         this.recentActivities = recentActivities;
+    }
+
+    public Instant getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Instant timestamp) {
+        this.timestamp = timestamp;
     }
 }

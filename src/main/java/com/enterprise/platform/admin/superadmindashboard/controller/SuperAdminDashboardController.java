@@ -1,5 +1,6 @@
 package com.enterprise.platform.admin.superadmindashboard.controller;
 
+import com.enterprise.platform.admin.superadmindashboard.dto.response.DashboardNavigationResponse;
 import com.enterprise.platform.admin.superadmindashboard.dto.response.DashboardStatisticsResponse;
 import com.enterprise.platform.admin.superadmindashboard.dto.response.DashboardSummaryResponse;
 import com.enterprise.platform.admin.superadmindashboard.dto.response.SuperAdminDashboardResponse;
@@ -67,6 +68,19 @@ public class SuperAdminDashboardController {
     public ResponseEntity<DashboardStatisticsResponse> getDashboardStatistics(Principal principal) {
         auditLog.info("Dashboard statistics accessed by user='{}' at={}", principal.getName(), Instant.now());
         DashboardStatisticsResponse response = dashboardService.getDashboardStatistics();
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Get Dashboard Navigation", description = "Returns quick-navigation and quick-action metadata for the Super Admin UI.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved dashboard navigation metadata"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
+    })
+    @GetMapping("/navigation")
+    public ResponseEntity<DashboardNavigationResponse> getDashboardNavigation(Principal principal) {
+        auditLog.info("Dashboard navigation accessed by user='{}' at={}", principal.getName(), Instant.now());
+        DashboardNavigationResponse response = dashboardService.getDashboardNavigation();
         return ResponseEntity.ok(response);
     }
 }

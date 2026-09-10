@@ -1,9 +1,8 @@
 package com.enterprise.platform.admin.superadmindashboard.service;
 
-import com.enterprise.platform.admin.superadmindashboard.client.PlatformHealthClient;
-import com.enterprise.platform.admin.superadmindashboard.client.SubscriptionClient;
-import com.enterprise.platform.admin.superadmindashboard.client.TenantClient;
-import com.enterprise.platform.admin.superadmindashboard.client.UserClient;
+import com.enterprise.platform.admin.superadmindashboard.client.DashboardContractClient;
+import com.enterprise.platform.admin.superadmindashboard.client.GlobalDashboardContractResponse;
+import com.enterprise.platform.admin.superadmindashboard.dto.response.DashboardNavigationResponse;
 import com.enterprise.platform.admin.superadmindashboard.dto.response.DashboardStatisticsResponse;
 import com.enterprise.platform.admin.superadmindashboard.dto.response.DashboardSummaryResponse;
 import com.enterprise.platform.admin.superadmindashboard.dto.response.SuperAdminDashboardResponse;
@@ -11,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,73 +20,73 @@ public class SuperAdminDashboardServiceImpl implements SuperAdminDashboardServic
 
     private static final Logger log = LoggerFactory.getLogger(SuperAdminDashboardServiceImpl.class);
 
-    private final PlatformHealthClient platformHealthClient;
-    private final TenantClient tenantClient;
-    private final UserClient userClient;
-    private final SubscriptionClient subscriptionClient;
+    private final DashboardContractClient dashboardContractClient;
 
-    public SuperAdminDashboardServiceImpl(
-            PlatformHealthClient platformHealthClient,
-            TenantClient tenantClient,
-            UserClient userClient,
-            SubscriptionClient subscriptionClient) {
-        this.platformHealthClient = platformHealthClient;
-        this.tenantClient = tenantClient;
-        this.userClient = userClient;
-        this.subscriptionClient = subscriptionClient;
+    public SuperAdminDashboardServiceImpl(DashboardContractClient dashboardContractClient) {
+        this.dashboardContractClient = dashboardContractClient;
     }
 
     @Override
     public SuperAdminDashboardResponse getDashboard() {
+        Optional<GlobalDashboardContractResponse> contractOpt = dashboardContractClient.getGlobalDashboardContract();
+
+        if (contractOpt.isEmpty()) {
+            log.warn("Global dashboard contract unavailable. Returning empty/default dashboard data.");
+            SuperAdminDashboardResponse response = new SuperAdminDashboardResponse(
+                    0L, 0L, 0L, "UNKNOWN", 0L, 0.0,
+                    new ArrayList<>(), new ArrayList<>()
+            );
+            response.setTimestamp(Instant.now());
+            return response;
+        }
+
+        GlobalDashboardContractResponse contract = contractOpt.get();
+
+        Long totalTenants = contract.summary() != null && contract.summary().totalTenants() != null
+                ? contract.summary().totalTenants() : 0L;
+        Long totalUsers = contract.summary() != null && contract.summary().totalUsers() != null
+                ? contract.summary().totalUsers() : 0L;
+        Long activeSessions = contract.summary() != null && contract.summary().onlineUsers() != null
+                ? contract.summary().onlineUsers() : 0L;
+
+        Long activeSubscriptions = contract.metrics() != null && contract.metrics().activeLicenses() != null
+                ? contract.metrics().activeLicenses() : 0L;
+        Double storageUtilization = contract.metrics() != null && contract.metrics().storageUtilizationPercentage() != null
+                ? contract.metrics().storageUtilizationPercentage() : 0.0;
+
+        String platformHealthStatus = contract.status() != null && contract.status().overallStatus() != null
+                ? contract.status().overallStatus() : "UNKNOWN";
+
         List<String> systemAlerts = new ArrayList<>();
+        if (contract.notifications() != null) {
+            for (GlobalDashboardContractResponse.Notification notification : contract.notifications()) {
+                if (notification.severity() != null
+                        && ("WARNING".equalsIgnoreCase(notification.severity())
+                            || "ERROR".equalsIgnoreCase(notification.severity()))) {
+                    systemAlerts.add(notification.title() + ": " + notification.message());
+                }
+            }
+        }
+
         List<String> recentActivities = new ArrayList<>();
-
-        String healthStatus = platformHealthClient.getPlatformHealth();
-        if ("UNKNOWN".equalsIgnoreCase(healthStatus) || "DOWN".equalsIgnoreCase(healthStatus)) {
-            systemAlerts.add("Platform Health Warning: Core services are reporting " + healthStatus);
+        if (contract.recentActivities() != null) {
+            for (GlobalDashboardContractResponse.RecentActivity activity : contract.recentActivities()) {
+                recentActivities.add(activity.moduleName() + ": " + activity.description());
+            }
         }
 
-        Double storageUtilization = platformHealthClient.getStorageUtilization().orElse(0.0);
-        if (storageUtilization >= 80.0) {
-            systemAlerts.add("Storage Warning: High disk utilization detected (" + storageUtilization + "%)");
-        }
-
-        Optional<Long> totalTenantsOpt = tenantClient.getTotalTenants();
-        Long totalTenants = totalTenantsOpt.orElseGet(() -> {
-            systemAlerts.add("Dependency Alert: Tenant Service is currently unavailable");
-            return 0L;
-        });
-        recentActivities.addAll(tenantClient.getRecentTenantActivities());
-
-        Optional<Long> totalUsersOpt = userClient.getTotalUsers();
-        Long totalUsers = totalUsersOpt.orElseGet(() -> {
-            systemAlerts.add("Dependency Alert: User Service is currently unavailable");
-            return 0L;
-        });
-        Optional<Long> activeSessionsOpt = userClient.getActiveSessions();
-        Long activeSessions = activeSessionsOpt.orElse(0L);
-
-        Optional<Long> activeSubscriptionsOpt = subscriptionClient.getActiveSubscriptions();
-        Long activeSubscriptions = activeSubscriptionsOpt.orElseGet(() -> {
-            systemAlerts.add("Dependency Alert: Subscription/License Service is currently unavailable");
-            return 0L;
-        });
-        systemAlerts.addAll(subscriptionClient.getSubscriptionAlerts());
-
-        if (recentActivities.isEmpty()) {
-            recentActivities.add("System operational. No critical recent administrative activities logged.");
-        }
-
-        return new SuperAdminDashboardResponse(
+        SuperAdminDashboardResponse response = new SuperAdminDashboardResponse(
                 totalTenants,
                 totalUsers,
                 activeSubscriptions,
-                healthStatus,
+                platformHealthStatus,
                 activeSessions,
                 storageUtilization,
                 systemAlerts,
                 recentActivities
         );
+        response.setTimestamp(Instant.now());
+        return response;
     }
 
     @Override
@@ -112,5 +112,30 @@ public class SuperAdminDashboardServiceImpl implements SuperAdminDashboardServic
                 full.getStorageUtilization(),
                 (long) full.getSystemAlerts().size()
         );
+    }
+
+    @Override
+    public DashboardNavigationResponse getDashboardNavigation() {
+        List<DashboardNavigationResponse.NavigationItem> items = List.of(
+                new DashboardNavigationResponse.NavigationItem(
+                        "Tenant Management", "/api/v1/admin/tenants", "business", "SUPER_ADMIN"),
+                new DashboardNavigationResponse.NavigationItem(
+                        "Global Settings", "/api/v1/admin/global-settings", "settings", "SUPER_ADMIN"),
+                new DashboardNavigationResponse.NavigationItem(
+                        "Platform Configuration", "/api/v1/admin/platform-configuration", "tune", "SUPER_ADMIN"),
+                new DashboardNavigationResponse.NavigationItem(
+                        "System Health", "/api/v1/admin/dashboard", "monitor_heart", "SUPER_ADMIN")
+        );
+
+        List<DashboardNavigationResponse.QuickAction> quickActions = List.of(
+                new DashboardNavigationResponse.QuickAction(
+                        "refresh-dashboard", "Refresh Dashboard", "/api/v1/admin/dashboard", "GET"),
+                new DashboardNavigationResponse.QuickAction(
+                        "create-tenant", "Create Tenant", "/api/v1/admin/tenants", "POST"),
+                new DashboardNavigationResponse.QuickAction(
+                        "view-alerts", "View System Alerts", "/api/v1/admin/dashboard", "GET")
+        );
+
+        return new DashboardNavigationResponse(items, quickActions);
     }
 }
