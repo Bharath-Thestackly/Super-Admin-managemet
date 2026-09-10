@@ -11,8 +11,6 @@ The **Super Admin Management Platform** is an enterprise backend solution compos
 
 The modules are implemented with Spring Boot and expose REST APIs for Super Admin and platform-level operations.
 
-> **Architecture note:** The supplied module READMEs use both "modules/services" and "microservices" terminology. They also contain different runtime ports and database names. This README preserves those module-level facts and calls out the inconsistencies rather than silently inventing a single runtime configuration.
-
 ---
 
 ## Platform Capabilities
@@ -103,7 +101,7 @@ The supplied module documentation identifies the following common technologies:
 | Technology | Usage |
 |---|---|
 | Java | 21 |
-| Spring Boot | 4.1.1 for the current Branding/Feature documentation; License documentation also contains an older 3.4.5 reference |
+| Spring Boot | 4.1.1  |
 | Spring Web MVC | REST APIs |
 | Spring Data JPA | Persistence |
 | PostgreSQL | Relational database |
@@ -118,8 +116,6 @@ The supplied module documentation identifies the following common technologies:
 | MockMvc | Controller testing |
 | Lombok | Boilerplate reduction |
 | Maven | Build and dependency management |
-
-> **Important:** Spring Boot version is not consistent across the supplied READMEs. Feature/Branding documentation states **4.1.1**, while the License README states **3.4.5**. Verify the actual root/module `pom.xml` files before standardizing the project version.
 
 ---
 
@@ -512,8 +508,6 @@ Renewal updates the expiry date of an existing license.
 The supplied License README documents Spring Security with OAuth2 Resource Server/JWT validation and identifies public documentation/health endpoints.
 
 The README also documents an optional `X-Actor-Id` header for some lifecycle operations.
-
-> **Verification required:** The supplied License README contains an older Spring Boot/security configuration than the Feature and Branding documentation. Verify the actual License `pom.xml` and `SecurityConfig` before using this section as a deployment contract.
 
 ---
 
@@ -1124,7 +1118,7 @@ The following differences must be confirmed:
 | Area | Inconsistency |
 |---|---|
 | Architecture terminology | Modules/services vs independent microservices |
-| Spring Boot | 4.1.1 vs 3.4.5 |
+| Spring Boot | 4.1.1  |
 | Ports | 8080 vs 8083 |
 | Database names | `cloud_platform` vs `enterprise_platform` |
 | Security | Local Basic/Super Admin vs JWT/OAuth2 documentation |
