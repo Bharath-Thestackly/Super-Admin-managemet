@@ -25,9 +25,9 @@ import java.util.UUID;
  * - Provide a correlation identifier for troubleshooting.
  */
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class PlatformBrandingGlobalExceptionHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(PlatformBrandingGlobalExceptionHandler.class);
 
     // ---------------------------------------------------------------------
     // Branding not found
