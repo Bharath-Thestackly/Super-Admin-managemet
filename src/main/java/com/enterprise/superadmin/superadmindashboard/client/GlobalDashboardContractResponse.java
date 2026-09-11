@@ -2,6 +2,10 @@ package com.enterprise.superadmin.superadmindashboard.client;
 
 import java.util.List;
 
+/**
+ * Represents the response from the global dashboard service.
+ */
+
 public record GlobalDashboardContractResponse(
         Summary summary,
         Metrics metrics,

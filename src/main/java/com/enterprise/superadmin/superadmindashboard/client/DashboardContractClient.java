@@ -9,6 +9,11 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
+
+/**
+ * Client for fetching the global dashboard contract from the global dashboard service.
+ */
+
 @Component
 public class DashboardContractClient {
 
