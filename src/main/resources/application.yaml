@@ -1,0 +1,43 @@
+server:
+  port: ${SERVER_PORT:8083}	
+spring:
+  application:
+    name: super-admin
+  security:
+    oauth2:
+      resourceserver:
+         jwt:
+           secret-key: "my-super-secret-key-oecp-platform-must-be-at-least-256-bits-long!!"
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/cloud_platform}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+  endpoint:
+    health:
+      show-details: never
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+
+  swagger-ui:
+    path: /swagger-ui.html
