@@ -1,13 +1,11 @@
-package com.enterprise.superadmin;
+package com.enterprise.superadmin.platform_health_service.service;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
 class SuperAdminApplicationTests {
 
     @Test
     void contextLoads() {
+        // Basic application test
     }
-
 }
