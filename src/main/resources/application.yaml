@@ -1,4 +1,17 @@
 <<<<<<< HEAD
+spring:
+  application:
+    name: platform-admin-service
+  profiles:
+    active: local
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/Cloud_Platform
+    username: postgres
+    password: root@123
+
+=======
+<<<<<<< HEAD
 # Server configuration
 server:
   port: ${SERVER_PORT:8081}
@@ -36,10 +49,17 @@ spring:
     driver-class-name: org.postgresql.Driver
 
 >>>>>>> origin/main
+>>>>>>> origin/main
   jpa:
     hibernate:
       ddl-auto: validate
     open-in-view: false
+<<<<<<< HEAD
+
+server:
+  port: 8081
+
+=======
     properties:
       hibernate:
         format_sql: true
@@ -69,10 +89,19 @@ spring:
     enabled: true
 
 >>>>>>> origin/main
+>>>>>>> origin/main
 management:
   endpoints:
     web:
       exposure:
+<<<<<<< HEAD
+        include: health,info
+services:
+  tenant:
+    base-url: http://localhost:8082
+
+
+=======
 <<<<<<< HEAD
         include: health,info,metrics
 
@@ -117,4 +146,5 @@ springdoc:
 
   swagger-ui:
     path: /swagger-ui.html
+>>>>>>> origin/main
 >>>>>>> origin/main

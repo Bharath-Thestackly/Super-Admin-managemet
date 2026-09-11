@@ -7,8 +7,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 @SpringBootApplication
-public class SuperAdminApplication {
+public class PlatformAdminServiceApplication {
 
+<<<<<<< HEAD:src/main/java/com/enterprise/superadmin/PlatformAdminServiceApplication.java
+	public static void main(String[] args) {
+		SpringApplication.run(PlatformAdminServiceApplication.class, args);
+	}
+=======
     private static final Logger log = LoggerFactory.getLogger(SuperAdminApplication.class);
 
     public static void main(String[] args) {
@@ -16,5 +21,6 @@ public class SuperAdminApplication {
         SpringApplication.run(SuperAdminApplication.class, args);
         log.info("Super Admin Management Service started successfully.");
     }
+>>>>>>> origin/main:src/main/java/com/enterprise/superadmin/SuperAdminApplication.java
 
 }
