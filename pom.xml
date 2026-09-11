@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<<<<<<< HEAD
+
+<!-- Maven project definition -->
+=======
+>>>>>>> origin/main
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
+<<<<<<< HEAD
+    <!-- Maven model version -->
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- Spring Boot parent manages compatible dependency versions -->
+=======
+    <modelVersion>4.0.0</modelVersion>
+
+>>>>>>> origin/main
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -12,10 +24,21 @@
         <relativePath/>
     </parent>
 
+<<<<<<< HEAD
+    <!-- Project information -->
+=======
+>>>>>>> origin/main
     <groupId>com.enterprise</groupId>
-    <artifactId>super-admin</artifactId>
+    <artifactId>platform-settings-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
+<<<<<<< HEAD
+    <!-- Project description -->
+    <name>platform-settings-service</name>
+    <description>Platform Settings module - One Enterprise Cloud Platform (Sprint 1, Module 1)</description>
+
+    <!-- Project properties -->
+=======
     <name>super-admin</name>
     <description>super-admin</description>
     <url/>
@@ -35,11 +58,17 @@
         <url/>
     </scm>
 
+>>>>>>> origin/main
     <properties>
         <java.version>21</java.version>
         <spring-cloud.version>2025.1.3</spring-cloud.version>
     </properties>
 
+<<<<<<< HEAD
+    <dependencies>
+
+        <!-- Spring MVC REST API support -->
+=======
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -93,11 +122,45 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
+>>>>>>> origin/main
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc</artifactId>
         </dependency>
 
+<<<<<<< HEAD
+        <!-- Spring Data JPA and Hibernate support -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!-- Bean validation support -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- Spring Security support -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- JWT resource-server support for enterprise authentication -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security-oauth2-resource-server</artifactId>
+        </dependency>
+
+        <!-- Production monitoring and health endpoints -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- PostgreSQL JDBC driver -->
+=======
         <!-- SpringDoc OpenAPI / Swagger -->
         <dependency>
             <groupId>org.springdoc</groupId>
@@ -106,11 +169,26 @@
         </dependency>
 
         <!-- PostgreSQL -->
+>>>>>>> origin/main
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
+
+        <!-- Flyway database migration -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-flyway</artifactId>
+        </dependency>
+
+        <!-- Flyway PostgreSQL support -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
+
+        <!-- Lombok reduces boilerplate code -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -124,37 +202,51 @@
             <optional>true</optional>
         </dependency>
 
+<<<<<<< HEAD
+        <!-- Swagger UI and OpenAPI documentation -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>3.1.1</version>
+        </dependency>
+
+        <!-- Developer tools for automatic restart during development -->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-devtools</artifactId>-->
+<!--            <scope>runtime</scope>-->
+<!--        </dependency>-->
+
+        <!--  Unit and integration testing support  -->
+=======
         <!-- Test Dependencies -->
 
+>>>>>>> origin/main
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator-test</artifactId>
+            <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation-test</artifactId>
-            <scope>test</scope>
-        </dependency>
+
+        <!-- Spring MVC testing support for MockMvc and WebMvcTest -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
         </dependency>
+<<<<<<< HEAD
+
+        <!--  Spring Security testing support  -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security-test</artifactId>
+            <scope>test</scope>
+=======
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.8.13</version>
+>>>>>>> origin/main
         </dependency>
 
     </dependencies>
@@ -162,12 +254,25 @@
     <build>
         <plugins>
 
+<<<<<<< HEAD
+            <!--  Compiles and packages the Spring Boot application  -->
+=======
             <!-- Spring Boot Maven Plugin -->
+>>>>>>> origin/main
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
+<<<<<<< HEAD
+            <!--  Keeps Java method parameter names for OpenAPI  -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <parameters>true</parameters>
+                </configuration>
+=======
             <!-- Maven Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -210,6 +315,7 @@
                     </execution>
 
                 </executions>
+>>>>>>> origin/main
             </plugin>
 
         </plugins>

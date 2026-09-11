@@ -1,3 +1,24 @@
+<<<<<<< HEAD
+# Server configuration
+server:
+  port: ${SERVER_PORT:8081}
+
+# Application configuration
+spring:
+
+  # Application name
+  application:
+    name: platform-settings-service
+
+  # PostgreSQL database configuration
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/cloud_platform}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:Srk@1234}
+    driver-class-name: org.postgresql.Driver
+
+  # JPA configuration
+=======
 server:
   port: ${SERVER_PORT:8083}	
 spring:
@@ -14,6 +35,7 @@ spring:
     password: ${DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
 
+>>>>>>> origin/main
   jpa:
     hibernate:
       ddl-auto: validate
@@ -22,13 +44,67 @@ spring:
       hibernate:
         format_sql: true
 
+<<<<<<< HEAD
+  # Flyway database migration configuration
+  flyway:
+    enabled: true
+#    baseline-on-migrate: true
+#    baseline-version: 0
+    locations: classpath:db/migration
+#  web:
+#    error:
+#      include-message: always
+#      include-stacktrace: always
+
+  # JWT configuration
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${JWT_ISSUER_URI:http://localhost:9000}
+
+# Actuator configuration
+=======
   flyway:
     enabled: true
 
+>>>>>>> origin/main
 management:
   endpoints:
     web:
       exposure:
+<<<<<<< HEAD
+        include: health,info,metrics
+
+  endpoint:
+    health:
+      show-details: when_authorized
+
+# Swagger/OpenAPI configuration
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+
+# Application Logging
+logging:
+  level:
+    com.enterprise.platform.settings: INFO
+
+# Application-specific security configuration
+#app:
+#  security:
+#    enabled: ${SECURITY_ENABLED:false}
+
+# Application information shown by Actuator
+info:
+  app:
+    name: Platform Settings Service
+    version: 0.0.1-SNAPSHOT
+    description: Platform-wide settings management service
+=======
         include: health,info
 
   endpoint:
@@ -41,3 +117,4 @@ springdoc:
 
   swagger-ui:
     path: /swagger-ui.html
+>>>>>>> origin/main
