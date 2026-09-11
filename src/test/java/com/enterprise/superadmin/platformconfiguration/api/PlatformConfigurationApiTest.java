@@ -639,7 +639,7 @@ class PlatformConfigurationApiTest {
 				.andExpect(jsonPath("$.passwordExpiry").value(PlatformConfigurationServiceImpl.DEFAULT_PASSWORD_EXPIRY))
 				.andExpect(jsonPath("$.maximumLoginAttempts")
 						.value(PlatformConfigurationServiceImpl.DEFAULT_MAX_LOGIN_ATTEMPTS))
-				.andExpect(jsonPath("$.updatedBy").value("SYSTEM_RESTORE"));
+				.andExpect(jsonPath("$.updatedBy").value("admin"));
 
 		PlatformConfiguration databaseRecord = repository.findById(saved.getId()).orElseThrow();
 		assertEquals(PlatformConfigurationServiceImpl.DEFAULT_SESSION_TIMEOUT, databaseRecord.getSessionTimeout());

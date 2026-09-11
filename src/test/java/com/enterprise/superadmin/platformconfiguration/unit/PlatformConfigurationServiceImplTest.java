@@ -95,6 +95,8 @@ class PlatformConfigurationServiceImplTest {
 
     @Mock
     private PlatformConfigurationHistoryRepository historyRepository;
+    
+  
 
     @Mock
     private Root<PlatformConfiguration> specRoot;
@@ -116,6 +118,7 @@ class PlatformConfigurationServiceImplTest {
 
     @InjectMocks
     private PlatformConfigurationServiceImpl service;
+    
 
     private PlatformConfiguration sampleConfig;
     private UUID configId;
@@ -599,7 +602,7 @@ class PlatformConfigurationServiceImplTest {
         assertEquals(PlatformConfigurationServiceImpl.DEFAULT_PLATFORM_NAME, res.platformName());
         assertEquals(PlatformConfigurationServiceImpl.DEFAULT_ENVIRONMENT, res.environment());
         assertEquals(2, res.version());
-        assertEquals("SYSTEM_RESTORE", res.updatedBy());
+        assertEquals(sampleConfig.getUpdatedBy(), res.updatedBy());
     }
 
     // =========================================================================

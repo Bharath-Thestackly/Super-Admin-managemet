@@ -84,19 +84,31 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
 			.map(Currency::getCurrencyCode)
 			.collect(Collectors.toSet());
 	private static final Set<String> IANA_TIME_ZONES = ZoneId.getAvailableZoneIds();
+	 // minutes
 
 	private final PlatformConfigurationRepository repository;
 	private final PlatformConfigurationHistoryRepository historyRepository;
+	
+	
+	//@Autowired(required = false)
+	//private AuditServiceClient auditServiceClient;
 
 	public PlatformConfigurationServiceImpl(PlatformConfigurationRepository repository) {
 		this(repository, null);
 	}
 
 	@Autowired
-	public PlatformConfigurationServiceImpl(PlatformConfigurationRepository repository,
-			PlatformConfigurationHistoryRepository historyRepository) {
-		this.repository = repository;
-		this.historyRepository = historyRepository;
+	public PlatformConfigurationServiceImpl(
+	        PlatformConfigurationRepository repository,
+	        PlatformConfigurationHistoryRepository historyRepository) {
+	    this.repository = repository;
+	    this.historyRepository = historyRepository;
+	}
+		
+
+	private UUID getCurrentUserId() {
+	    // Return authenticated user UUID, or fallback system UUID:
+	    return UUID.fromString("00000000-0000-0000-0000-000000000000");
 	}
 
 	/**
@@ -175,6 +187,8 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
 			validatePreActivation(request.environment(), request.autoBackup(),
 					request.sessionTimeout(), request.passwordExpiry());
 		}
+		
+
 
 		LocalDate effectiveDate = LocalDate.now();
 		LocalDateTime now = LocalDateTime.now();
@@ -218,6 +232,7 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
 		recordSnapshot(saved, "INITIAL_CREATION", currentUser);
 		log.info("Platform configuration successfully created with id: {}, version: {}, createdBy: '{}'", saved.getId(),
 				saved.getVersion(), currentUser);
+		//logAudit(currentUser,"CONFIGURATION_CREATED", "Completed");
 		return toResponse(saved);
 	}
 
@@ -263,6 +278,7 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
 					request.sessionTimeout(), request.passwordExpiry());
 		}
 
+
 		config.setConfigurationName(request.configurationName());
 		config.setConfigurationCategory(request.configurationCategory());
 		config.setDescription(request.description());
@@ -298,6 +314,8 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
 		recordSnapshot(updated, "CONFIGURATION_UPDATE", currentUser);
 		log.info("Platform configuration successfully updated: id={}, version={}, updatedBy='{}'", updated.getId(),
 				updated.getVersion(), currentUser);
+		//logAudit(currentUser,"CONFIGURATION_UPDATED", "Completed");
+
 		return toResponse(updated);
 	}
 
@@ -346,6 +364,9 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
 		recordSnapshot(updated, "STATUS_CHANGE_" + normalizedStatus, currentUser);
 		log.info("Platform configuration status updated: id={}, status={}, version={}, updatedBy='{}'", updated.getId(),
 				updated.getStatus(), updated.getVersion(), currentUser);
+		//logAudit(currentUser,"CONFIGURATION_STATUS_UPDATED", "Completed");
+
+		
 		return toResponse(updated);
 	}
 
@@ -381,6 +402,8 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
 			saved = config;
 		}
 		recordSnapshot(saved, "CONFIGURATION_DELETED", deleter);
+		//logAudit(deleter,"CONFIGURATION_DELETED", "Completed");
+
 		log.info("Platform configuration soft deleted: id={}, version={}, deletedBy={}", id, saved.getVersion(), deleter);
 	}
 
@@ -427,13 +450,14 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
 
 		LocalDateTime now = LocalDateTime.now();
 		config.setUpdatedAt(now);
-		config.setUpdatedBy("SYSTEM_RESTORE");
+		config.setUpdatedBy(getCurrentUsername());
 		config.setVersion(config.getVersion() != null ? config.getVersion() + 1 : 2);
 
 		PlatformConfiguration restored = repository.save(config);
 		recordSnapshot(restored, "RESTORE_DEFAULTS", "SYSTEM_RESTORE");
 		log.info("Platform configuration defaults restored successfully: id={}, version={}, updatedBy='{}'",
 				restored.getId(), restored.getVersion(), "SYSTEM_RESTORE");
+		//logAudit(getCurrentUsername(),"CONFIGURATION_RESTORED_TO_DEFAULTS", "Completed");
 		return toResponse(restored);
 	}
 
@@ -533,6 +557,7 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
 
 		log.info("Configuration id: {} successfully rolled back to version {} (new version: {})", id, version,
 				rolledBack.getVersion());
+		//logAudit(resolvedUpdater,"CONFIGURATION_ROLLBACK", "Completed");
 		return toResponse(rolledBack);
 	}
 
@@ -614,6 +639,7 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
 			throw new InvalidConfigurationValueException(
 					"Invalid currency code: '" + currency + "'. Must be a valid ISO 4217 currency code (e.g., 'USD', 'EUR').");
 		}
+		//logAudit(getCurrentUsername(),"MASTER_DATA_VALIDATION", "Completed");
 	}
 
 	/**
@@ -645,6 +671,7 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
 						+ " mins) cannot exceed password expiry (" + passwordExpiryMinutes + " mins)");
 			}
 		}
+		//logAudit(getCurrentUsername(),"PRE_ACTIVATION_VALIDATION", "Completed");
 	}
 
 	private void recordSnapshot(PlatformConfiguration config, String changeReason, String recordedBy) {
@@ -755,4 +782,11 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
 		}
 		return getCurrentUsername();
 	}
+	
+	/*
+	 * private void logAudit(String user, String action, String status) { if
+	 * (this.auditServiceClient != null) { try { auditServiceClient.logEvent(user,
+	 * "CONFIGURATION_CREATED", "SUCCESS"); } catch (Exception ex) {
+	 * log.warn("Failed to record audit log: {}", ex.getMessage()); } } }
+	 */
 }

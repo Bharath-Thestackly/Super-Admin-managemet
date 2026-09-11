@@ -216,4 +216,5 @@ public class PlatformConfigurationController {
         log.info("REST request to rollback configuration id: {} to version {}", id, version);
         return ResponseEntity.ok(service.rollbackToVersion(id, version));
     }
+    
 }
