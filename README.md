@@ -381,10 +381,8 @@ Super-Admin-management/
 │   │       ├── application.yaml
 │   │       └── db/
 │   │           └── migration/
-│   │               ├── V1__create_platform_settings.sql
-│   │               ├── V2__create_platform_settings_history.sql
-│   │               ├── V3__insert_default_platform_settings.sql
-│   │               └── V4__cleanup_and_seed_history.sql
+│   │               └── V1__create_platform_settings_tables.sql
+│   │               
 │   │
 │   └── test/
 │       ├── java/

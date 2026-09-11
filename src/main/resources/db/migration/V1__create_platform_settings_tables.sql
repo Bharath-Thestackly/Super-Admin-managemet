@@ -1,6 +1,13 @@
--- Create platform_settings table with constraints and default values
+-- ============================================================================
+-- OECP - Platform Settings Service
+-- Migration: V1
+--
+-- Creates dedicated platform_settings and platform_settings_history
+-- tables under cloud_platform database.
+-- ============================================================================
 
-CREATE TABLE platform_settings
+-- 1. Create platform_settings table with constraints and default values
+CREATE TABLE IF NOT EXISTS public.platform_settings
 (
 
     id                          UUID PRIMARY KEY    DEFAULT gen_random_uuid(),
@@ -80,9 +87,9 @@ CREATE TABLE platform_settings
         CHECK (version_number > 0)
 );
 
--- Create platform_settings_history table with constraints and default values
 
-CREATE TABLE platform_settings_history
+-- 2. Create platform_settings_history table with constraints and default values
+CREATE TABLE IF NOT EXISTS public.platform_settings_history
 (
 
     history_id                  UUID PRIMARY KEY    DEFAULT gen_random_uuid(),
